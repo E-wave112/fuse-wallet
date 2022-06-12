@@ -137,7 +137,7 @@ describe('UserService', () => {
       const BASE_URL = configService.get<'string'>('API_BASE_URL');
       const resetPin: EmailOption = mailStructure(
         [email],
-        'iyayiemmanuel1@gmail.com',
+        'support@fusewallet.io',
         'Reset your Pin',
         configService.get('TEMPLATE_RESET_PIN'),
         {
@@ -200,7 +200,7 @@ describe('UserService', () => {
 
       const verify: EmailOption = mailStructure(
         [verifyEmail.email],
-        'support@bitwallet.io',
+        'support@fusewallet.io',
         'Verify Your Account',
         configService.get('TEMPLATE_VERIFY_ACCOUNT'),
         {
