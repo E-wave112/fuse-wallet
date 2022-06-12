@@ -15,6 +15,10 @@ A wallet system API where users can perform transactions
 
 ```
 $ npm install
+<<<<<<< HEAD
+=======
+
+>>>>>>> ae7049d... pushed codebase
 ```
 or
 
