@@ -1,44 +1,44 @@
 import {
-  IsString,
-  IsNumber,
-  IsNotEmpty,
-  IsEmail,
-  IsObject,
+    IsString,
+    IsNumber,
+    IsNotEmpty,
+    IsEmail,
+    IsObject,
 } from 'class-validator';
 export class FlutterwaveChargeBankDto {
-  @IsNotEmpty()
-  @IsString()
-  currency: string;
+    @IsNotEmpty()
+    @IsString()
+    currency: string;
 
-  @IsNotEmpty()
-  @IsNumber()
-  amount: number;
+    @IsNotEmpty()
+    @IsNumber()
+    amount: number;
 
-  @IsNotEmpty()
-  @IsString()
-  fullname: string;
+    @IsNotEmpty()
+    @IsString()
+    fullname: string;
 
-  @IsNotEmpty()
-  @IsString()
-  @IsEmail()
-  email: string;
+    @IsNotEmpty()
+    @IsString()
+    @IsEmail()
+    email: string;
 
-  @IsNotEmpty()
-  @IsString()
-  account_bank: string;
+    @IsNotEmpty()
+    @IsString()
+    account_bank: string;
 
-  @IsNotEmpty()
-  @IsString()
-  account_number: string;
+    @IsNotEmpty()
+    @IsString()
+    account_number: string;
 
-  @IsNotEmpty()
-  @IsString()
-  tx_ref: string;
+    @IsNotEmpty()
+    @IsString()
+    tx_ref: string;
 
-  @IsNotEmpty()
-  @IsString()
-  callback_url: string;
+    @IsNotEmpty()
+    @IsString()
+    callback_url: string;
 
-  @IsObject()
-  meta: Record<any, unknown>;
+    @IsObject()
+    meta: Record<any, unknown>;
 }

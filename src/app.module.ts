@@ -12,29 +12,29 @@ import { AuthModule } from './auth/auth.module';
 import { MailModule } from './mail/mail.module';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      expandVariables: true,
-      cache: false,
-      load: [configuration],
-    }),
-
-    TypeOrmModule.forRootAsync({
-      useFactory: async () =>
-        Object.assign(await getConnectionOptions(), {
-          autoLoadEntities: true,
+    imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+            expandVariables: true,
+            cache: false,
+            load: [configuration],
         }),
-    }),
-    UserModule,
-    WalletModule,
-    TransactionModule,
-    AuthModule,
-    MailModule,
-  ],
-  controllers: [AppController],
-  providers: [AppService],
+
+        TypeOrmModule.forRootAsync({
+            useFactory: async () =>
+                Object.assign(await getConnectionOptions(), {
+                    autoLoadEntities: true,
+                }),
+        }),
+        UserModule,
+        WalletModule,
+        TransactionModule,
+        AuthModule,
+        MailModule,
+    ],
+    controllers: [AppController],
+    providers: [AppService],
 })
 export class AppModule {
-  constructor(private connection: Connection) {}
+    constructor(private connection: Connection) {}
 }

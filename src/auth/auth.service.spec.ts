@@ -10,62 +10,62 @@ import { ConfigService } from '@nestjs/config';
 jest.setTimeout(30000);
 
 describe('AuthService', () => {
-  let service: AuthService;
-  let configService: ConfigService;
+    let service: AuthService;
+    let configService: ConfigService;
 
-  beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        AuthService,
-        User,
-        {
-          provide: JwtService,
-          useFactory: () => ({
-            sign: jest.fn(() => true),
-          }),
-        },
-        ConfigService,
-      ],
-      imports: [AppModule, UserModule],
-    }).compile();
+    beforeEach(async () => {
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [
+                AuthService,
+                User,
+                {
+                    provide: JwtService,
+                    useFactory: () => ({
+                        sign: jest.fn(() => true),
+                    }),
+                },
+                ConfigService,
+            ],
+            imports: [AppModule, UserModule],
+        }).compile();
 
-    service = module.get<AuthService>(AuthService);
-    configService = module.get<ConfigService>(ConfigService);
-  });
-
-  describe('signup a user', () => {
-    it('service to sign up a user', async () => {
-      const user = new SignUpDto();
-      user.email = 'dwave101@yahoo.com';
-      user.pin = '123456';
-      user.firstName = 'dwave';
-      user.lastName = 'dwave';
-      user.phone = '08012345678';
-      user.deviceId = '123456789';
-      try {
-        const result = await service.signup(user);
-        expect(result).toBeCalledWith(user);
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-      }
+        service = module.get<AuthService>(AuthService);
+        configService = module.get<ConfigService>(ConfigService);
     });
-  });
 
-  describe('login a user', () => {
-    it('service to login a user', async () => {
-      const loginDto = new LogInUserDto();
-      loginDto.email = 'dwave101@yahoo.com';
-      loginDto.pin = '123456';
-      try {
-        const result = await service.login(loginDto);
-        expect(result).toBeCalledWith(loginDto);
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-      }
+    describe('signup a user', () => {
+        it('service to sign up a user', async () => {
+            const user = new SignUpDto();
+            user.email = 'dwave101@yahoo.com';
+            user.pin = '123456';
+            user.firstName = 'dwave';
+            user.lastName = 'dwave';
+            user.phone = '08012345678';
+            user.deviceId = '123456789';
+            try {
+                const result = await service.signup(user);
+                expect(result).toBeCalledWith(user);
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+            }
+        });
     });
-  });
 
-  it('should be defined', () => {
-    expect(service).toBeDefined();
-  });
+    describe('login a user', () => {
+        it('service to login a user', async () => {
+            const loginDto = new LogInUserDto();
+            loginDto.email = 'dwave101@yahoo.com';
+            loginDto.pin = '123456';
+            try {
+                const result = await service.login(loginDto);
+                expect(result).toBeCalledWith(loginDto);
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+            }
+        });
+    });
+
+    it('should be defined', () => {
+        expect(service).toBeDefined();
+    });
 });

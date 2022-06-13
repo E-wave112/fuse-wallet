@@ -10,14 +10,14 @@ import { WalletService } from '../wallet/wallet.service';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([Transactions]),
-    forwardRef(() => WalletModule),
-    UserModule,
-    AuthModule,
-  ],
-  controllers: [TransactionController],
-  providers: [TransactionService, WalletService, ConfigService],
-  exports: [TransactionService],
+    imports: [
+        TypeOrmModule.forFeature([Transactions]),
+        forwardRef(() => WalletModule),
+        UserModule,
+        AuthModule,
+    ],
+    controllers: [TransactionController],
+    providers: [TransactionService, WalletService, ConfigService],
+    exports: [TransactionService],
 })
 export class TransactionModule {}

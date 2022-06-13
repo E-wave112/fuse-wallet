@@ -8,14 +8,14 @@ import { UserModule } from '../user/user.module';
 import { AuthModule } from '../auth/auth.module';
 
 @Module({
-  controllers: [WalletController],
-  providers: [WalletService, Wallet],
-  imports: [
-    TypeOrmModule.forFeature([Wallet]),
-    forwardRef(() => TransactionModule),
-    UserModule,
-    AuthModule,
-  ],
-  exports: [WalletService, Wallet],
+    controllers: [WalletController],
+    providers: [WalletService, Wallet],
+    imports: [
+        TypeOrmModule.forFeature([Wallet]),
+        forwardRef(() => TransactionModule),
+        UserModule,
+        AuthModule,
+    ],
+    exports: [WalletService, Wallet],
 })
 export class WalletModule {}

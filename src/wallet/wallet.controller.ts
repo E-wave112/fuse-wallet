@@ -8,32 +8,32 @@ import { WithdrawWalletDto } from './dto/withraw-wallet.dto';
 
 @Controller('wallet')
 export class WalletController {
-  constructor(private walletService: WalletService) {}
+    constructor(private walletService: WalletService) {}
 
-  @UseGuards(UserAuthGuard)
-  @Post('user/fund-wallet')
-  async fundWallet(
-    @Body() body: FundWalletByCardDto | FundWalletByBanktDto,
-    @Query('type') type: string,
-    @UserDecorator() user: any,
-  ) {
-    return this.walletService.reconcileFundMethod(user, type, body);
-  }
+    @UseGuards(UserAuthGuard)
+    @Post('user/fund-wallet')
+    async fundWallet(
+        @Body() body: FundWalletByCardDto | FundWalletByBanktDto,
+        @Query('type') type: string,
+        @UserDecorator() user: any,
+    ) {
+        return this.walletService.reconcileFundMethod(user, type, body);
+    }
 
-  @UseGuards(UserAuthGuard)
-  @Get('me')
-  async getWallet(@UserDecorator() user: any) {
-    return await this.walletService.checkIfWalletExists({
-      where: { user: { id: user.userId } },
-    });
-  }
+    @UseGuards(UserAuthGuard)
+    @Get('me')
+    async getWallet(@UserDecorator() user: any) {
+        return await this.walletService.checkIfWalletExists({
+            where: { user: { id: user.userId } },
+        });
+    }
 
-  @UseGuards(UserAuthGuard)
-  @Post('withdrawals')
-  async withdrawFromWallet(
-    @Body() body: WithdrawWalletDto,
-    @UserDecorator() user: any,
-  ) {
-    return await this.walletService.withdrawFromWallet(user, body);
-  }
+    @UseGuards(UserAuthGuard)
+    @Post('withdrawals')
+    async withdrawFromWallet(
+        @Body() body: WithdrawWalletDto,
+        @UserDecorator() user: any,
+    ) {
+        return await this.walletService.withdrawFromWallet(user, body);
+    }
 }

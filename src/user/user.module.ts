@@ -8,15 +8,15 @@ import { AuthModule } from '../auth/auth.module';
 import { MailModule } from '../mail/mail.module';
 
 @Module({
-  imports: [
-    forwardRef(() => AuthModule),
-    TypeOrmModule.forFeature([User, Emailver]),
-    User,
-    Emailver,
-    MailModule,
-  ],
-  controllers: [UserController],
-  exports: [TypeOrmModule, UserService],
-  providers: [UserService, User, Emailver],
+    imports: [
+        forwardRef(() => AuthModule),
+        TypeOrmModule.forFeature([User, Emailver]),
+        User,
+        Emailver,
+        MailModule,
+    ],
+    controllers: [UserController],
+    exports: [TypeOrmModule, UserService],
+    providers: [UserService, User, Emailver],
 })
 export class UserModule {}
