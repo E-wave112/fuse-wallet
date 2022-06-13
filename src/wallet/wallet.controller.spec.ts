@@ -8,8 +8,8 @@ import { Wallet } from './entities/wallet.entity';
 import { UserAuthGuard } from '../auth/guards';
 import { v4 as uuidv4 } from 'uuid';
 import { TransactionModule } from '../transaction/transaction.module';
-import { FundWalletDto } from './dto/fund-wallet.dto';
-import { WithdrawWalletDto } from './dto/withraw-wallet.dto';
+import { FundWalletByCardDto } from './dto/fund-wallet-card.dto';
+import { FundWalletByBanktDto } from './dto/fund-wallet-bank.dto';
 import { WalletService } from './wallet.service';
 import { Transactions } from '../transaction/entities/transaction.entity';
 jest.setTimeout(30000);
@@ -41,7 +41,7 @@ describe('WalletController', () => {
         const guards = Reflect.getMetadata('__guards__', controller.fundWallet);
         const guard = new guards[0]();
         const user = uuidv4();
-        const fund: FundWalletDto = {
+        const fund: FundWalletByCardDto = {
           cardExpiration: '12/20',
           card: '1234567890123456',
           cardCvv: '123',
@@ -51,7 +51,7 @@ describe('WalletController', () => {
         };
 
         const result = await controller.fundWallet(fund, user);
-        const serviceResult = await service.fundWallet(user, fund);
+        const serviceResult = await service.fundWalletWithCard(user, fund);
         expect(result).toBeCalledWith(fund, user);
         expect(serviceResult).toHaveBeenCalledWith(fund, user);
         expect(guard).toBeInstanceOf(UserAuthGuard);
@@ -70,7 +70,7 @@ describe('WalletController', () => {
         );
         const guard = new guards[0]();
         const user = uuidv4();
-        const withdraw: WithdrawWalletDto = {
+        const withdraw: FundWalletByBanktDto = {
           amount: 3000,
           account_bank: 'United Bank for Africa',
           accountNumber: '0690000037',
@@ -78,7 +78,7 @@ describe('WalletController', () => {
         };
 
         const result = await controller.withdrawFromWallet(withdraw, user);
-        const serviceResult = await service.fundWallet(withdraw, user);
+        const serviceResult = await service.fundWalletByBank(withdraw, user);
         expect(result).toHaveBeenCalledWith(withdraw, user);
 
         expect(service).toBeCalledWith(withdraw, user);

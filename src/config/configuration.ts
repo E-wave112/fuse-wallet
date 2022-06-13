@@ -13,4 +13,7 @@ export default () => ({
   emailRegex:
     /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/,
   EXPIRES_IN: process.env.EXPIRES_IN,
+  WEBHOOK_URL: process.env.WEBHOOK_URL,
+  FLW_ENCRYPTION_KEY: process.env.FLW_ENCRYPTION_KEY,
+  WEBHOOK_HASH: process.env.WEBHOOK_HASH,
 });

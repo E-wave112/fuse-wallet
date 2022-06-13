@@ -41,6 +41,7 @@ describe('TransactionService', () => {
           type: TransactionType.CREDIT,
           status: TransactionStatus.SUCCESS,
           reference: 'funded-1002123',
+          narration: 'Funded wallet',
         };
         const result = await service.createTransaction(newTransaction);
         expect(result).toHaveBeenCalledWith(newTransaction);

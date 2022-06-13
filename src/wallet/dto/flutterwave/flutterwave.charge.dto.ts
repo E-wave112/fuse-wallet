@@ -5,7 +5,7 @@ import {
   IsEmail,
   IsObject,
 } from 'class-validator';
-export class FlutterwaveChargeDto {
+export class FlutterwaveChargeCardDto {
   @IsNotEmpty()
   @IsString()
   card_number: string;
@@ -57,4 +57,11 @@ export class FlutterwaveChargeDto {
   @IsNotEmpty()
   @IsString()
   otp: string;
+
+  @IsNotEmpty()
+  @IsString()
+  callback_url: string;
+
+  @IsObject()
+  meta: Record<any, unknown>;
 }

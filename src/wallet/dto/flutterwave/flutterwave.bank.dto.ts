@@ -5,7 +5,7 @@ import {
   IsEmail,
   IsObject,
 } from 'class-validator';
-export class FlutterwaveWithdrawDto {
+export class FlutterwaveChargeBankDto {
   @IsNotEmpty()
   @IsString()
   currency: string;
@@ -34,14 +34,6 @@ export class FlutterwaveWithdrawDto {
   @IsNotEmpty()
   @IsString()
   tx_ref: string;
-
-  @IsNotEmpty()
-  @IsString()
-  narration: string;
-
-  @IsNotEmpty()
-  @IsString()
-  debit_currency: string;
 
   @IsNotEmpty()
   @IsString()

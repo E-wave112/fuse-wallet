@@ -5,7 +5,7 @@ import {
   PrimaryGeneratedColumn,
   CreateDateColumn,
   UpdateDateColumn,
-  // OneToMany,
+  OneToMany,
   // BeforeInsert,
 } from 'typeorm';
 
@@ -69,6 +69,10 @@ export class User extends BaseEntity {
 
   @Column({ type: 'varchar', default: '' })
   lastLoggedIn?: string;
+
+  // All transactions done by a user
+  @OneToMany(() => User, (user) => user.id)
+  beneficiaries: User[];
 
   @Column()
   @CreateDateColumn()

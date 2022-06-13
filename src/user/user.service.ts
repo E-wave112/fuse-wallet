@@ -12,6 +12,9 @@ import {
   IncorrectCredentialsException,
   TokenExpiredException,
   TransactionPinNotSetException,
+  AccountNotVerifiedException,
+  BeneficiaryAlreadyAddedException,
+  CannotAddSelfException,
 } from '../exceptions';
 import { Compare, hashCred } from '../utils';
 import { RequestVerifyEmailDto } from './dto/request-verify-email.dto';
@@ -26,6 +29,7 @@ import { TransactionPinDto } from './dto/transaction-pin.dto';
 import { PrivateKeyDto } from './dto/private-key.dto';
 import { ResetTransactionPinDto } from './dto/reset-transaction-pin.dto';
 import { ValidatePinDto } from './dto/validate-pin.dto';
+import { BeneficiaryDto } from './dto/beneficiary.dto';
 
 @Injectable()
 export class UserService {
@@ -55,7 +59,7 @@ export class UserService {
       }
       return singleUser[0];
     } catch (err) {
-      // console.error(err);
+      console.error(err);
       throw new BadRequestException('incorrect credentials!');
     }
   }
@@ -64,6 +68,19 @@ export class UserService {
     try {
       const singleUser = await this.UserRepository.findOne(id);
       if (!singleUser) throw new UserNotFoundException();
+      return singleUser;
+    } catch (error) {
+      console.error(error.message);
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async isVerifiedUser(id: string): Promise<void | User> {
+    try {
+      const singleUser = await this.findUserById(id);
+      if (!singleUser.verified) {
+        throw new AccountNotVerifiedException();
+      }
       return singleUser;
     } catch (error) {
       console.error(error.message);
@@ -95,7 +112,13 @@ export class UserService {
     try {
       const checkEmail: Emailver = await this.EmailverRepository.findOne({
         email: data.email,
+        valid: true,
       });
+      if (!checkEmail) {
+        throw new UserNotFoundException(
+          "oops,it seems you don't have an account or you have already verified your email",
+        );
+      }
       const token = uuidv4().split('-').join('');
       const expiry = Date.now() + 1440 * 60 * 1000;
       // update the emailver row if the phone number already exists else create a new one
@@ -331,6 +354,42 @@ export class UserService {
         statusCode: 200,
         message: 'transaction pin reset successfully!',
       };
+    } catch (error) {
+      console.error(error.message);
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async addBeneficiary(id: string, data: BeneficiaryDto) {
+    try {
+      const findUser: User = await this.findUserById(id);
+      //check if beneficiary already exists
+      const findBeneficiary = await this.UserRepository.findOne({
+        email: data.email,
+      });
+      if (findBeneficiary) {
+        // check if beneficiary is the same user
+        if (findBeneficiary.email === findUser.email) {
+          throw new CannotAddSelfException();
+        }
+        // check if beneficiary is already added
+        const userBeneficiaries = findUser.beneficiaries;
+        for (const beneficiary of userBeneficiaries) {
+          if (beneficiary.email === findBeneficiary.email) {
+            throw new BeneficiaryAlreadyAddedException();
+          }
+        }
+        // add beneficiary
+        userBeneficiaries.push(findBeneficiary);
+        findUser.beneficiaries = userBeneficiaries;
+        await findUser.save();
+        return {
+          statusCode: 200,
+          message: 'beneficiary added successfully!',
+        };
+      } else {
+        throw new UserNotFoundException("this beneficiary doesn't exist!");
+      }
     } catch (error) {
       console.error(error.message);
       throw new BadRequestException(error.message);

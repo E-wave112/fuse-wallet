@@ -7,12 +7,12 @@ import { AuthModule } from '../auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Wallet } from './entities/wallet.entity';
 import {
-  FlutterwaveChargeDto,
-  FlutterwaveWithdrawDto,
+  FlutterwaveChargeCardDto,
+  FlutterwaveChargeBankDto,
 } from './dto/flutterwave';
 import { v4 as uuidv4 } from 'uuid';
-import { FundWalletDto } from './dto/fund-wallet.dto';
-import { WithdrawWalletDto } from './dto/withraw-wallet.dto';
+import { FundWalletByCardDto } from './dto/fund-wallet-card.dto';
+import { FundWalletByBanktDto } from './dto/fund-wallet-bank.dto';
 import { TransactionDto } from '../transaction/dto/transaction.dto';
 import {
   TransactionStatus,
@@ -20,11 +20,13 @@ import {
 } from '../transaction/constants/transaction.enum';
 import { TransactionService } from '../transaction/transaction.service';
 import { Transactions } from '../transaction/entities/transaction.entity';
+import { ConfigService } from '@nestjs/config';
 jest.setTimeout(30000);
 
 describe('WalletService', () => {
   let service: WalletService;
   let transactionService: TransactionService;
+  let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -35,18 +37,19 @@ describe('WalletService', () => {
         UserModule,
         TypeOrmModule.forFeature([Wallet, Transactions]),
       ],
-      providers: [WalletService, TransactionService],
+      providers: [WalletService, TransactionService, ConfigService],
     }).compile();
 
     service = module.get<WalletService>(WalletService);
     transactionService = module.get<TransactionService>(TransactionService);
+    configService = module.get<ConfigService>(ConfigService);
   });
 
   describe('fund-wallet', () => {
     it('service to fund wallet and return a wallet', async () => {
       try {
         const user = uuidv4();
-        const fund: FundWalletDto = {
+        const fund: FundWalletByCardDto = {
           cardExpiration: '12/20',
           card: '1234567890123456',
           cardCvv: '123',
@@ -55,7 +58,7 @@ describe('WalletService', () => {
           otp: '1234',
         };
         const [month, year] = fund.cardExpiration.split('/');
-        const flutterwavePayload: FlutterwaveChargeDto = {
+        const flutterwavePayload: FlutterwaveChargeCardDto = {
           card_number: fund.card,
           cvv: fund.cardCvv,
           expiry_month: month,
@@ -69,6 +72,8 @@ describe('WalletService', () => {
           authorization: {},
           pin: fund.pin,
           otp: fund.otp,
+          meta: {},
+          callback_url: configService.get('WEBHOOK_URL'),
         };
 
         const newTransaction: TransactionDto = {
@@ -77,10 +82,11 @@ describe('WalletService', () => {
           type: TransactionType.CREDIT,
           status: TransactionStatus.SUCCESS,
           reference: 'funded-1002123',
+          narration: 'transaction successful',
         };
 
-        const result = await service.fundWallet(user, fund);
-        const flwSpyService = await service.flutterwaveCharge(
+        const result = await service.fundWalletWithCard(user, fund);
+        const flwSpyService = await service.flutterwaveChargeCard(
           flutterwavePayload,
         );
         const transactionSpyService =
@@ -101,13 +107,13 @@ describe('WalletService', () => {
     it('service to withdraw from wallet and return a wallet', async () => {
       try {
         const user = uuidv4();
-        const withdraw: WithdrawWalletDto = {
+        const withdraw: FundWalletByBanktDto = {
           amount: 3000,
           account_bank: 'United Bank for Africa',
           accountNumber: '0690000037',
           transactionPin: '2000',
         };
-        const flutterwavePayload: FlutterwaveWithdrawDto = {
+        const flutterwavePayload: FlutterwaveChargeBankDto = {
           tx_ref: `ref-withdraw-${Date.now()}`, //This is a unique reference, unique to the particular transaction being carried out. It is generated when it is not provided by the merchant for every transaction.
           amount: withdraw.amount, //This is the amount to be charged.
           account_bank: withdraw.account_bank, //This is the Bank numeric code. You can get a list of supported banks and their respective codes Here: https://developer.flutterwave.com/v3.0/reference#get-all-banks
@@ -115,6 +121,8 @@ describe('WalletService', () => {
           currency: 'NGN',
           email: 'eddy@gmail.com',
           fullname: `Edmond Kirsch`,
+          meta: {},
+          callback_url: configService.get('WEBHOOK_URL'),
         };
 
         const newTransaction: TransactionDto = {
@@ -123,10 +131,11 @@ describe('WalletService', () => {
           type: TransactionType.DEBIT,
           status: TransactionStatus.SUCCESS,
           reference: 'funded-1002123',
+          narration: 'transaction successful',
         };
 
-        const result = await service.withdrawFromWallet(user, withdraw);
-        const flwSpyService = await service.flutterwaveWithdraw(
+        const result = await service.fundWalletByBank(user, withdraw);
+        const flwSpyService = await service.flutterwaveChargeBank(
           flutterwavePayload,
         );
         const transactionSpyService =

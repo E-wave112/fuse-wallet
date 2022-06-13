@@ -22,4 +22,8 @@ export class TransactionDto {
   @IsNotEmpty()
   @IsString()
   reference: string;
+
+  @IsNotEmpty()
+  @IsString()
+  narration: string;
 }

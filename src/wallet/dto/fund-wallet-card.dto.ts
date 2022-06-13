@@ -1,6 +1,6 @@
 import { IsString, IsNumber, IsNotEmpty } from 'class-validator';
 
-export class FundWalletDto {
+export class FundWalletByCardDto {
   @IsNotEmpty()
   @IsString()
   cardExpiration: string;

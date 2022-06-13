@@ -35,6 +35,9 @@ export class Transactions extends BaseEntity {
   reference: string;
 
   @Column()
+  narration: string;
+
+  @Column()
   @CreateDateColumn()
   createdAt: Date;
 
