@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+    forwardRef,
+    Inject,
+    Injectable,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { Transactions } from './entities/transaction.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -10,17 +15,13 @@ import {
 import { VerifyWebhookDto } from './dto/verify-webhook.dto';
 import { TransactionStatus } from './constants/transaction.enum';
 import { WalletService } from '../wallet/wallet.service';
-import { ConfigService } from '@nestjs/config';
-import { Wallet } from '../wallet/entities/wallet.entity';
 
 @Injectable()
 export class TransactionService {
     constructor(
         @InjectRepository(Transactions)
         private TransactionsRepository: Repository<Transactions>,
-        @InjectRepository(Wallet)
-        private WalletRepository: Repository<Wallet>,
-        private configService: ConfigService,
+        @Inject(forwardRef(() => WalletService))
         private walletService: WalletService,
     ) {}
     async createTransaction(payload: TransactionDto): Promise<Transactions> {
@@ -79,6 +80,9 @@ export class TransactionService {
                 singleTransaction.status = TransactionStatus.SUCCESS;
                 singleTransaction.amount = data.body.amount;
                 singleTransaction.narration = 'Transaction successful';
+                // update the wallet balance
+                findWallet.balance += Number(data.body.amount);
+                await findWallet.save();
             } else if (data.body.status === 'failed') {
                 singleTransaction.status = TransactionStatus.FAILED;
                 singleTransaction.narration = 'Transaction failed';

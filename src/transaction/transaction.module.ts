@@ -6,7 +6,6 @@ import { Transactions } from './entities/transaction.entity';
 import { AuthModule } from '../auth/auth.module';
 import { UserModule } from '../user/user.module';
 import { WalletModule } from '../wallet/wallet.module';
-import { WalletService } from '../wallet/wallet.service';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
@@ -17,7 +16,7 @@ import { ConfigService } from '@nestjs/config';
         AuthModule,
     ],
     controllers: [TransactionController],
-    providers: [TransactionService, WalletService, ConfigService],
+    providers: [TransactionService, ConfigService],
     exports: [TransactionService],
 })
 export class TransactionModule {}

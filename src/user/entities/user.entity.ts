@@ -2,12 +2,14 @@ import {
     Column,
     Entity,
     BaseEntity,
+    JoinColumn,
     PrimaryGeneratedColumn,
     CreateDateColumn,
     UpdateDateColumn,
     OneToMany,
     // BeforeInsert,
 } from 'typeorm';
+import { maxNum } from '../../user/constants/max-num';
 
 @Entity('User')
 export class User extends BaseEntity {
@@ -71,8 +73,10 @@ export class User extends BaseEntity {
     lastLoggedIn?: string;
 
     // All transactions done by a user
-    @OneToMany(() => User, (user) => user.id)
-    beneficiaries: User[];
+    // @OneToMany(() => User, (user) => user.id)
+    // @JoinColumn()
+    @Column({ type: 'longtext' })
+    beneficiaries: string;
 
     @Column()
     @CreateDateColumn()

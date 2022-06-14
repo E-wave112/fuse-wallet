@@ -4,7 +4,6 @@ import { UseGuards, Get } from '@nestjs/common';
 import { UserAuthGuard } from '../auth/guards';
 import { UserDecorator } from '../user/decorators/user.decorator';
 import { Transactions } from './entities/transaction.entity';
-import { InternalErrorException } from '../exceptions';
 import { VerifyWebhookDto } from './dto/verify-webhook.dto';
 import configuration from '../config/configuration';
 import { ConfigService } from '@nestjs/config';
@@ -23,8 +22,8 @@ export class TransactionController {
         });
     }
 
-    @Post('verify')
     // create a controller to validate an incoming webhook request
+    @Post('verify')
     async verifyWebhook(@UserDecorator() user: any, @Body() body, @Req() req) {
         const data = new VerifyWebhookDto();
         data.headers = req.headers['verif-hash'];

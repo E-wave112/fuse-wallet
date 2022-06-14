@@ -261,7 +261,8 @@ export class WalletService {
         const withdrawal = await this.flutterwaveWithdraw(payload);
         if (withdrawal.status === 'success') {
             withdrawal.message = `Yikes!, you have successfully withdrawn ${data.amount} tokens from your wallet`;
-            wallet.balance = wallet.balance - Number(data.amount);
+            // wallet.balance = wallet.balance - Number(data.amount);
+            wallet.balance -= Number(data.amount);
             await wallet.save();
 
             const transactionObj: TransactionDto = {
@@ -359,7 +360,9 @@ export class WalletService {
         obj: Record<any, unknown>,
     ): Promise<any | Wallet> {
         try {
-            return await this.walletRepository.findOne(obj);
+            const findWallet = await this.walletRepository.findOne(obj);
+            if (!findWallet) throw new WalletNotFoundException();
+            return findWallet;
         } catch (error) {
             console.error(error);
             throw new WalletNotFoundException();
