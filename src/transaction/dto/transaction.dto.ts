@@ -3,23 +3,27 @@ import { TransactionType } from '../constants/transaction.enum';
 import { TransactionStatus } from '../constants/transaction.enum';
 
 export class TransactionDto {
-  @IsNotEmpty()
-  @IsString()
-  user: any;
+    @IsNotEmpty()
+    @IsString()
+    user: any;
 
-  @IsNotEmpty()
-  @IsNumber()
-  amount: number;
+    @IsNotEmpty()
+    @IsNumber()
+    amount: number;
 
-  @IsNotEmpty()
-  @IsEnum(TransactionType)
-  type: TransactionType;
+    @IsNotEmpty()
+    @IsEnum(TransactionType)
+    type: TransactionType;
 
-  @IsNotEmpty()
-  @IsEnum(TransactionStatus)
-  status: TransactionStatus;
+    @IsNotEmpty()
+    @IsEnum(TransactionStatus)
+    status: TransactionStatus;
 
-  @IsNotEmpty()
-  @IsString()
-  reference: string;
+    @IsNotEmpty()
+    @IsString()
+    reference: string;
+
+    @IsNotEmpty()
+    @IsString()
+    narration: string;
 }

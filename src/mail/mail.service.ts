@@ -7,30 +7,30 @@ const configService: ConfigService = new ConfigService(configuration);
 
 @Injectable()
 export class MailService {
-  static sendgridConfig() {
-    SendGrid.setApiKey(configService.get('SENDGRID_API_KEY'));
-    SendGrid.setSubstitutionWrappers('{{', '}}'); // Configure the substitution tag wrappers globally
-    return SendGrid;
-  }
-  static async send(options: EmailOption) {
-    const sendGridSend = this.sendgridConfig();
-    try {
-      const message: any = {
-        to: options.recipients,
-        from: options.from || 'support@bitwallet.io',
-        subject: options.subject || 'Account Notification',
-        templateId: options.templateId,
-      };
-      if (options.substitutions) {
-        message.dynamic_template_data = Object.assign(
-          {},
-          options.substitutions,
-        );
-        return await sendGridSend.send(message);
-      }
-    } catch (error) {
-      console.error(error);
-      throw error;
+    static sendgridConfig() {
+        SendGrid.setApiKey(configService.get('SENDGRID_API_KEY'));
+        SendGrid.setSubstitutionWrappers('{{', '}}'); // Configure the substitution tag wrappers globally
+        return SendGrid;
     }
-  }
+    static async send(options: EmailOption) {
+        const sendGridSend = this.sendgridConfig();
+        try {
+            const message: any = {
+                to: options.recipients,
+                from: options.from || 'support@bitwallet.io',
+                subject: options.subject || 'Account Notification',
+                templateId: options.templateId,
+            };
+            if (options.substitutions) {
+                message.dynamic_template_data = Object.assign(
+                    {},
+                    options.substitutions,
+                );
+                return await sendGridSend.send(message);
+            }
+        } catch (error) {
+            console.error(error);
+            throw error;
+        }
+    }
 }

@@ -14,66 +14,67 @@ import { Wallet } from '../wallet/entities/wallet.entity';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private userService: UserService,
-    private jwtService: JwtService,
-    @InjectRepository(User) private UserRepository: Repository<User>,
-  ) {}
+    constructor(
+        private userService: UserService,
+        private jwtService: JwtService,
+        @InjectRepository(User) private UserRepository: Repository<User>,
+    ) {}
 
-  async login(obj: LogInUserDto) {
-    try {
-      const user = await this.userService.findUser(obj);
+    async login(obj: LogInUserDto) {
+        try {
+            const user = await this.userService.findUser(obj);
 
-      const payload = { sub: user.id };
-      obj.pin = hashCred(obj.pin);
-      const newUser = await this.UserRepository.save({
-        id: user.id,
-        lastLoggedIn: new Date().toLocaleString(),
-        ...obj,
-      });
-      return {
-        access_token: this.jwtService.sign(payload),
-        message: 'Login Successful',
-        user,
-      };
-    } catch (err) {
-      console.error(err.message);
-      throw new BadRequestException(err.message);
+            const payload = { sub: user.id };
+            obj.pin = hashCred(obj.pin);
+            const newUser = await this.UserRepository.save({
+                id: user.id,
+                lastLoggedIn: new Date().toLocaleString(),
+                ...obj,
+            });
+            return {
+                access_token: this.jwtService.sign(payload),
+                message: 'Login Successful',
+                user,
+            };
+        } catch (err) {
+            console.error(err.message);
+            throw new BadRequestException(err.message);
+        }
     }
-  }
 
-  async signup(obj: SignUpDto) {
-    try {
-      const { email, phone } = obj;
-      const user = await this.UserRepository.findOne({
-        where: [{ email }, { phone }],
-      });
-      if (user) throw new DataConflictException('This user already exists!');
-      const hashedPin = hashCred(obj.pin);
-      obj.pin = hashedPin;
+    async signup(obj: SignUpDto) {
+        try {
+            const { email, phone } = obj;
+            const user = await this.UserRepository.findOne({
+                where: [{ email }, { phone }],
+            });
+            if (user)
+                throw new DataConflictException('This user already exists!');
+            const hashedPin = hashCred(obj.pin);
+            obj.pin = hashedPin;
 
-      const privateKey =
-        GenerateAddressWalletKey.generateAddressAndKey().privateKey;
+            const privateKey =
+                GenerateAddressWalletKey.generateAddressAndKey().privateKey;
 
-      const newUser = await this.UserRepository.save({
-        ...obj,
-        privateKey: hashCred(privateKey),
-      });
+            const newUser = await this.UserRepository.save({
+                ...obj,
+                privateKey: hashCred(privateKey),
+            });
 
-      // automatically create the user wallet
-      const walletInstance = new Wallet();
-      walletInstance.user = newUser;
-      await walletInstance.save();
-      return {
-        message:
-          'user created successfully, please ensure your keep your private key somewhere safe and secure as there is no way to recover it once it is lost!',
-        newUser,
-        walletInstance,
-        privateKey: privateKey,
-      };
-    } catch (err) {
-      console.error(err.message);
-      throw new DataConflictException(err.message);
+            // automatically create the user wallet
+            const walletInstance = new Wallet();
+            walletInstance.user = newUser;
+            await walletInstance.save();
+            return {
+                message:
+                    'user created successfully, please ensure your keep your private key somewhere safe and secure as there is no way to recover it once it is lost!',
+                newUser,
+                walletInstance,
+                privateKey: privateKey,
+            };
+        } catch (err) {
+            console.error(err.message);
+            throw new DataConflictException(err.message);
+        }
     }
-  }
 }
