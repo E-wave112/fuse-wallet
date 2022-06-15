@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Wallet } from './entities/wallet.entity';
 import { ConfigService } from '@nestjs/config';
+import { MailService } from '../mail/mail.service';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Flutterwave = require('flutterwave-node-v3');
 import {
@@ -17,6 +18,7 @@ import {
     TransactionStatus,
 } from '../transaction/constants/transaction.enum';
 import { TransactionService } from '../transaction/transaction.service';
+import { Transactions } from '../transaction/entities/transaction.entity';
 import { FundWalletByBanktDto } from './dto/fund-wallet-bank.dto';
 import {
     FlutterwaveChargeCardDto,
@@ -25,6 +27,9 @@ import {
 } from './dto/flutterwave';
 import { UserService } from '../user/user.service';
 import { WithdrawWalletDto } from './dto/withraw-wallet.dto';
+import { PeerTransferDto } from './dto/peer-transfer.dto';
+import { EmailOption } from '../mail/types/mail.types';
+import { mailStructure } from '../mail/interface-send/mail.send';
 
 @Injectable()
 export class WalletService {
@@ -33,6 +38,7 @@ export class WalletService {
         private configService: ConfigService,
         private transactionService: TransactionService,
         private userService: UserService,
+        private mailService: MailService,
     ) {}
 
     async flutterwaveChargeCard(payload: FlutterwaveChargeCardDto) {
@@ -169,8 +175,6 @@ export class WalletService {
         const fundedBank = await this.flutterwaveChargeBank(payload);
         if (fundedBank.status === 'success') {
             fundedBank.message = `Yahtzee!, ${data.amount} tokens is on the way to your wallet, you can check your wallet to see the balance`;
-            // wallet.balance = wallet.balance + Number(data.amount);
-            // await wallet.save();
 
             const transactionObj: TransactionDto = {
                 user: user.userId,
@@ -246,8 +250,10 @@ export class WalletService {
         if (withdrawal.status === 'success') {
             withdrawal.message = `Yikes!, you have successfully withdrawn ${data.amount} tokens from your wallet`;
             // wallet.balance = wallet.balance - Number(data.amount);
-            wallet.balance -= Number(data.amount);
-            await wallet.save();
+            await this.updateWalletBalance(-Number(data.amount), wallet);
+            // wallet.balance -= Number(data.amount);
+
+            // await wallet.save();
 
             const transactionObj: TransactionDto = {
                 user: user.userId,
@@ -266,6 +272,121 @@ export class WalletService {
             };
         } else {
             return { status: withdrawal.status, message: withdrawal.message };
+        }
+    }
+
+    async transferPeerTokens(data: PeerTransferDto) {
+        try {
+            const ref = `peer-transfer-${data.user.userId}`;
+            // find the sender wallet
+            const senderWallet = await this.checkIfWalletExists({
+                where: { user: { id: data.user.userId } },
+            });
+            // check if the sender wallet balance is sufficient
+            const funds = this.checkSufficientFunds(
+                Number(data.amount),
+                senderWallet,
+            );
+            if (!funds) throw new InsufficientTokensException();
+            // find the receiver wallet
+
+            // check if the transaction pin is correct
+            const checkTransactionPin =
+                await this.userService.validateTransactionPin({
+                    userId: data.user.userId,
+                    pin: data.transactionPin,
+                });
+            const receiverUser = await this.userService.findUserByEmail(
+                data.receiver,
+            );
+            const ref2 = `peer-transfer-credit-${receiverUser.id}`;
+            const receiverWallet = await this.checkIfWalletExists({
+                where: { user: { id: receiverUser.id } },
+            });
+            await this.updateWalletBalance(-Number(data.amount), senderWallet);
+            // senderWallet.balance -= Number(data.amount);
+            await this.updateWalletBalance(Number(data.amount), receiverWallet);
+            // receiverWallet.balance += Number(data.amount);
+            // const updateWalletBalance = [
+            //     await senderWallet.save(),
+            //     await receiverWallet.save(),
+            // ];
+            // Promise.all(updateWalletBalance).then((values) => {
+            //     console.log('values:::', values);
+            // });
+
+            const transactionObjSender: TransactionDto = {
+                user: data.user.userId,
+                amount: data.amount,
+                type: TransactionType.PEER_TRANSFER,
+                status: TransactionStatus.SUCCESS,
+                reference: ref,
+                narration: 'peer transfer completed',
+            };
+
+            const transactionObjReceiver: TransactionDto = {
+                user: receiverUser.id,
+                amount: data.amount,
+                type: TransactionType.CREDIT,
+                status: TransactionStatus.SUCCESS,
+                reference: ref2,
+                narration: 'amount credited to your wallet',
+            };
+            const transactionQueue: Transactions[] = [
+                await this.transactionService.createTransaction(
+                    transactionObjSender,
+                ),
+                await this.transactionService.createTransaction(
+                    transactionObjReceiver,
+                ),
+            ];
+
+            Promise.all(transactionQueue).then((values) => {
+                console.log('values:::', values);
+            });
+
+            const optionsReciever: EmailOption = mailStructure(
+                [receiverUser.email],
+                'support@fusewallet.io',
+                'Notice of a Received Peer Transaction',
+                this.configService.get('TEMPLATE_RECEIVED_ID'),
+                {
+                    name: `${receiverUser.firstName}`,
+                    subject: 'Notice of a Received Peer Transaction',
+                    amount: `${data.amount}`,
+                    address: senderWallet.user.email,
+                    balance: receiverWallet.balance,
+                },
+            );
+            const optionsSender: EmailOption = mailStructure(
+                [senderWallet.user.email],
+                'support@fusewallet.io',
+                'Notice of a Transfer',
+                this.configService.get('TEMPLATE_TRANSFER_ID'),
+                {
+                    name: `${senderWallet.user.firstName}`,
+                    subject: 'Notice of a Transfer',
+                    amount: `${data.amount}`,
+                    address: receiverWallet.user.email,
+                    balance: senderWallet.balance,
+                },
+            );
+            const mailSenderQueue = [
+                await this.mailService.send(optionsSender),
+                await this.mailService.send(optionsReciever),
+            ];
+            Promise.all(mailSenderQueue).then((values) => {
+                console.log('values:::', values);
+            });
+
+            return {
+                status: 200,
+                message: `peer completed!, you have successfully sent ${data.amount} tokens to user with the address ${receiverUser.email}, you (and your peer) should recieve an email confirmation of the transaction`,
+                senderWallet,
+            };
+        } catch (error) {
+            console.error(error.message);
+            throw new InternalErrorException(error.message);
         }
     }
 
@@ -376,5 +497,14 @@ export class WalletService {
             return false;
         }
         return true;
+    }
+
+    public async updateWalletBalance(
+        amount: number,
+        wallet: Partial<Wallet>,
+    ): Promise<Partial<Wallet>> {
+        wallet.balance += amount;
+        await wallet.save();
+        return wallet;
     }
 }

@@ -47,6 +47,7 @@ export class UserService {
         private EmailverRepository: Repository<Emailver>,
         private readonly user: User,
         private readonly configService: ConfigService,
+        private readonly mailService: MailService,
     ) {}
 
     async findUser(login: LogInUserDto): Promise<User> {
@@ -75,6 +76,19 @@ export class UserService {
     async findUserById(id: string) {
         try {
             const singleUser = await this.UserRepository.findOne(id);
+            if (!singleUser) throw new UserNotFoundException();
+            return singleUser;
+        } catch (error) {
+            console.error(error.message);
+            throw new BadRequestException(error.message);
+        }
+    }
+
+    async findUserByEmail(email: string) {
+        try {
+            const singleUser = await this.UserRepository.findOne({
+                where: { email },
+            });
             if (!singleUser) throw new UserNotFoundException();
             return singleUser;
         } catch (error) {
@@ -157,7 +171,7 @@ export class UserService {
                 },
             );
 
-            const sendgrid = await MailService.send(verifyEmail);
+            const sendgrid = await this.mailService.send(verifyEmail);
             console.log(sendgrid);
             return {
                 statusCode: 200,
@@ -264,9 +278,7 @@ export class UserService {
     async requestResetPin(data: RequestResetPinDto) {
         const BASE_URL = this.configService.get<'string'>('API_BASE_URL');
         try {
-            const findUser: User = await this.UserRepository.findOne({
-                email: data.email,
-            });
+            const findUser: User = await this.findUserByEmail(data.email);
             if (!findUser) throw new UserNotFoundException();
             const token = uuidv4().split('-').join('');
             findUser.resetToken = token;
@@ -285,7 +297,7 @@ export class UserService {
                 },
             );
 
-            const sendgrid = await MailService.send(resetPin);
+            const sendgrid = await this.mailService.send(resetPin);
             console.log(sendgrid);
             return {
                 statusCode: 200,
@@ -378,9 +390,7 @@ export class UserService {
         try {
             const findUser: User = await this.findUserById(id);
             //check if beneficiary already exists
-            let findBeneficiary = await this.UserRepository.findOne({
-                email: data.email,
-            });
+            let findBeneficiary = await this.findUserByEmail(data.email);
             if (findBeneficiary) {
                 // check if beneficiary is the same user
                 if (findBeneficiary.email === findUser.email) {

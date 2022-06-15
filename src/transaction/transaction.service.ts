@@ -81,8 +81,12 @@ export class TransactionService {
                 singleTransaction.amount = data.body.amount;
                 singleTransaction.narration = 'Transaction successful';
                 // update the wallet balance
-                findWallet.balance += Number(data.body.amount);
-                await findWallet.save();
+                await this.walletService.updateWalletBalance(
+                    Number(data.body.amount),
+                    findWallet,
+                );
+                // findWallet.balance += Number(data.body.amount);
+                // await findWallet.save();
             } else if (data.body.status === 'failed') {
                 singleTransaction.status = TransactionStatus.FAILED;
                 singleTransaction.narration = 'Transaction failed';
