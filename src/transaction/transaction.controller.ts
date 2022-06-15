@@ -30,7 +30,7 @@ export class TransactionController {
         console.log(req.body)
         const hash = configService.get('WEBHOOK_HASH');
         data.hash = hash;
-        data.body = req.body;
+        data.body = req.body.data;
         return await this.transactionService.verifyWebhookService(data);
     }
 }
