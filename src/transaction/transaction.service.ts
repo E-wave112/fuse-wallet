@@ -56,7 +56,7 @@ export class TransactionService {
     // create a transaction service to confirm a webhook request
     async verifyWebhookService(data: VerifyWebhookDto) {
         try {
-            const walletId = stripString(data.body.txRef);
+            const walletId = stripString(data.body.tx_ref);
             const findWallet = await this.walletService.checkIfWalletExists({
                 where: { user: { id: walletId } },
             });
@@ -67,7 +67,7 @@ export class TransactionService {
             }
             const singleTransaction = await this.TransactionsRepository.findOne(
                 {
-                    reference: data.body.txRef,
+                    reference: data.body.tx_ref,
                 },
             );
             if (!singleTransaction) {
