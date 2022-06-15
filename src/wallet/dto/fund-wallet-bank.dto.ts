@@ -12,8 +12,4 @@ export class FundWalletByBanktDto {
     @IsNotEmpty()
     @IsString()
     accountNumber: string;
-
-    @IsNotEmpty()
-    @IsString()
-    transactionPin: string;
 }

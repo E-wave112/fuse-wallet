@@ -61,7 +61,4 @@ export class FlutterwaveChargeCardDto {
     @IsNotEmpty()
     @IsString()
     callback_url: string;
-
-    @IsObject()
-    meta: Record<any, unknown>;
 }

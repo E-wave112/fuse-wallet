@@ -7,12 +7,12 @@ const configService: ConfigService = new ConfigService(configuration);
 
 @Injectable()
 export class MailService {
-    static sendgridConfig() {
+    sendgridConfig() {
         SendGrid.setApiKey(configService.get('SENDGRID_API_KEY'));
         SendGrid.setSubstitutionWrappers('{{', '}}'); // Configure the substitution tag wrappers globally
         return SendGrid;
     }
-    static async send(options: EmailOption) {
+    async send(options: EmailOption) {
         const sendGridSend = this.sendgridConfig();
         try {
             const message: any = {

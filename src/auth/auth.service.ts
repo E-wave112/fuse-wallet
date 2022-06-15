@@ -58,6 +58,7 @@ export class AuthService {
 
             const newUser = await this.UserRepository.save({
                 ...obj,
+                beneficiaries: '[]',
                 privateKey: hashCred(privateKey),
             });
 

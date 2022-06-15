@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { TransactionModule } from '../transaction/transaction.module';
 import { UserModule } from '../user/user.module';
 import { AuthModule } from '../auth/auth.module';
+import { MailModule } from '../mail/mail.module';
 
 @Module({
     controllers: [WalletController],
@@ -15,6 +16,7 @@ import { AuthModule } from '../auth/auth.module';
         forwardRef(() => TransactionModule),
         UserModule,
         AuthModule,
+        MailModule,
     ],
     exports: [WalletService, Wallet],
 })

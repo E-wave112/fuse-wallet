@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { forwardRef } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { AppModule } from '../app.module';
 import { WalletController } from './wallet.controller';
@@ -12,6 +13,7 @@ import { FundWalletByCardDto } from './dto/fund-wallet-card.dto';
 import { FundWalletByBanktDto } from './dto/fund-wallet-bank.dto';
 import { WalletService } from './wallet.service';
 import { Transactions } from '../transaction/entities/transaction.entity';
+import { WithdrawWalletDto } from './dto/withraw-wallet.dto';
 jest.setTimeout(30000);
 
 describe('WalletController', () => {
@@ -24,7 +26,7 @@ describe('WalletController', () => {
                 AppModule,
                 AuthModule,
                 UserModule,
-                TransactionModule,
+                forwardRef(() => TransactionModule),
                 TypeOrmModule.forFeature([Wallet, Transactions]),
             ],
             controllers: [WalletController],
@@ -52,8 +54,8 @@ describe('WalletController', () => {
                     pin: '123456',
                     otp: '1234',
                 };
-
-                const result = await controller.fundWallet(fund, user);
+                const type = 'card';
+                const result = await controller.fundWallet(fund, type, user);
                 const serviceResult = await service.fundWalletWithCard(
                     user,
                     fund,
@@ -76,7 +78,7 @@ describe('WalletController', () => {
                 );
                 const guard = new guards[0]();
                 const user = uuidv4();
-                const withdraw: FundWalletByBanktDto = {
+                const withdraw: WithdrawWalletDto = {
                     amount: 3000,
                     account_bank: 'United Bank for Africa',
                     accountNumber: '0690000037',

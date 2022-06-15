@@ -15,6 +15,7 @@ import {
 import { VerifyWebhookDto } from './dto/verify-webhook.dto';
 import { TransactionStatus } from './constants/transaction.enum';
 import { WalletService } from '../wallet/wallet.service';
+import { stripString } from '../utils';
 
 @Injectable()
 export class TransactionService {
@@ -55,10 +56,9 @@ export class TransactionService {
     // create a transaction service to confirm a webhook request
     async verifyWebhookService(data: VerifyWebhookDto) {
         try {
+            const walletId = stripString(data.body.txRef);
             const findWallet = await this.walletService.checkIfWalletExists({
-                where: {
-                    where: { user: { id: data.body.data.meta.user_id.userId } },
-                },
+                where: { user: { id: walletId } },
             });
             // verify the hash of the webhook request
             if (!data.headers || data.headers !== data.hash) {
@@ -67,7 +67,7 @@ export class TransactionService {
             }
             const singleTransaction = await this.TransactionsRepository.findOne(
                 {
-                    reference: data.reference,
+                    reference: data.body.txRef,
                 },
             );
             if (!singleTransaction) {
@@ -81,8 +81,10 @@ export class TransactionService {
                 singleTransaction.amount = data.body.amount;
                 singleTransaction.narration = 'Transaction successful';
                 // update the wallet balance
-                findWallet.balance += Number(data.body.amount);
-                await findWallet.save();
+                await this.walletService.updateWalletBalance(
+                    Number(data.body.amount),
+                    findWallet,
+                );
             } else if (data.body.status === 'failed') {
                 singleTransaction.status = TransactionStatus.FAILED;
                 singleTransaction.narration = 'Transaction failed';

@@ -25,6 +25,7 @@ import { mailStructure } from '../mail/interface-send/mail.send';
 import { TransactionPinDto } from './dto/transaction-pin.dto';
 import { PrivateKeyDto } from './dto/private-key.dto';
 import { ResetTransactionPinDto } from './dto/reset-transaction-pin.dto';
+import { BeneficiaryDto } from './dto/beneficiary.dto';
 
 jest.setTimeout(30000);
 
@@ -354,6 +355,104 @@ describe('UserController', () => {
                     await controller.resetUserTransactionPin(id, resetPin);
                 expect(result).toBeCalledWith(id, resetPin);
                 expect(controllerResult).toHaveBeenCalledWith(id, resetPin);
+                expect(guard).toBeInstanceOf(UserAuthGuard);
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+            }
+        });
+    });
+
+    describe('POST /user/beneficiary/new', () => {
+        it('controller to add a new beneficiary', async () => {
+            const id = uuidv4();
+            const email = 'dwaave171@yahoo.com';
+            const beneficiary = new BeneficiaryDto();
+            beneficiary.email = email;
+            try {
+                const guards = Reflect.getMetadata(
+                    '__guards__',
+                    controller.addNewBeneficiary,
+                );
+                const guard = new guards[0]();
+                const result = await service.addBeneficiary(id, beneficiary);
+                const controllerResult = await controller.addNewBeneficiary(
+                    id,
+                    beneficiary,
+                );
+                expect(result).toBeCalledWith(id, beneficiary);
+                expect(controllerResult).toHaveBeenCalledWith(id, beneficiary);
+                expect(guard).toBeInstanceOf(UserAuthGuard);
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+            }
+        });
+    });
+
+    describe('GET /user/beneficaries/me', () => {
+        it('controller to get the beneficiaries of a particular user', async () => {
+            const id = uuidv4();
+            try {
+                const guards = Reflect.getMetadata(
+                    '__guards__',
+                    controller.getUserBeneficaries,
+                );
+                const guard = new guards[0]();
+                const controllerResult = await controller.getUserBeneficaries(
+                    id,
+                );
+                const result = await service.viewAllUserBeneficiaries(id);
+                expect(result).toBeCalledWith(id);
+                expect(controllerResult).toHaveBeenCalledWith(id);
+                expect(guard).toBeInstanceOf(UserAuthGuard);
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+            }
+        });
+    });
+
+    describe('PUT /user/beneficiary/remove', () => {
+        it('controller to delete a user beneficiary', async () => {
+            const id = uuidv4();
+            const beneficiary = new BeneficiaryDto();
+            beneficiary.email = 'eddybrock@hotmail.com';
+            try {
+                const guards = Reflect.getMetadata(
+                    '__guards__',
+                    controller.deleteUserBeneficiary,
+                );
+                const guard = new guards[0]();
+                const controllerResult = await controller.deleteUserBeneficiary(
+                    id,
+                    beneficiary,
+                );
+                const result = await service.deleteBeneficiary(id, beneficiary);
+                expect(result).toBeCalledWith(id, beneficiary);
+                expect(controllerResult).toHaveBeenCalledWith(id, beneficiary);
+                expect(guard).toBeInstanceOf(UserAuthGuard);
+            } catch (error) {
+                expect(error).toBeInstanceOf(Error);
+            }
+        });
+    });
+
+    describe('GET /user/beneficiary/one', () => {
+        it('controller to get a single beneficiary', async () => {
+            const id = uuidv4();
+            const beneficiary = new BeneficiaryDto();
+            beneficiary.email = 'eddybrock@hotmail.com';
+            try {
+                const guards = Reflect.getMetadata(
+                    '__guards__',
+                    controller.getSingleBeneficiary,
+                );
+                const guard = new guards[0]();
+                const controllerResult = await controller.getSingleBeneficiary(
+                    id,
+                    beneficiary,
+                );
+                const result = await service.checkBeneficiary(id, beneficiary);
+                expect(result).toBeCalledWith(id, beneficiary);
+                expect(controllerResult).toHaveBeenCalledWith(id, beneficiary);
                 expect(guard).toBeInstanceOf(UserAuthGuard);
             } catch (error) {
                 expect(error).toBeInstanceOf(Error);

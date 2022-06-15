@@ -5,6 +5,7 @@ import { WalletService } from './wallet.service';
 import { FundWalletByCardDto } from './dto/fund-wallet-card.dto';
 import { FundWalletByBanktDto } from './dto/fund-wallet-bank.dto';
 import { WithdrawWalletDto } from './dto/withraw-wallet.dto';
+import { PeerTransferDto } from './dto/peer-transfer.dto';
 
 @Controller('wallet')
 export class WalletController {
@@ -35,5 +36,15 @@ export class WalletController {
         @UserDecorator() user: any,
     ) {
         return await this.walletService.withdrawFromWallet(user, body);
+    }
+
+    @UseGuards(UserAuthGuard)
+    @Post('peer-transfer')
+    async TransferFromWallet(
+        @Body() data: PeerTransferDto,
+        @UserDecorator() user: any,
+    ) {
+        data.user = user;
+        return await this.walletService.transferPeerTokens(data);
     }
 }

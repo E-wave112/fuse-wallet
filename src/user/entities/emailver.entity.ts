@@ -12,7 +12,7 @@ export class Emailver extends BaseEntity {
     @PrimaryGeneratedColumn('uuid')
     id: string;
 
-    // describe an otp field
+    // describe an verify token field
     @Column({ type: 'varchar', default: '' })
     verifyToken?: string;
 

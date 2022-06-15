@@ -24,14 +24,12 @@ export class TransactionController {
 
     // create a controller to validate an incoming webhook request
     @Post('verify')
-    async verifyWebhook(@UserDecorator() user: any, @Body() body, @Req() req) {
+    async verifyWebhook(@Body() body, @Req() req) {
         const data = new VerifyWebhookDto();
         data.headers = req.headers['verif-hash'];
-        // return req.body.data.id;
         const hash = configService.get('WEBHOOK_HASH');
         data.hash = hash;
-        data.body = body.data;
-        data.reference = body.data.tx_ref;
+        data.body = req.body;
         return await this.transactionService.verifyWebhookService(data);
     }
 }

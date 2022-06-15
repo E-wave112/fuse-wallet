@@ -12,3 +12,4 @@ export * from './account-not-verified';
 export * from './beneficiary-already-exists';
 export * from './cannot-add-beneficiary';
 export * from './no-user-beneficiaries';
+export * from './beneficiary-not-found';
