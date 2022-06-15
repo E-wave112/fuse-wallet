@@ -44,11 +44,6 @@ export class WalletController {
         @Body() data: PeerTransferDto,
         @UserDecorator() user: any,
     ) {
-        // const peerData: PeerTransferDto = {
-        //     amount: data.amount,
-        //     user,
-        //     receiver: data.receiver,
-        // };
         data.user = user;
         return await this.walletService.transferPeerTokens(data);
     }

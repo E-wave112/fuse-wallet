@@ -136,11 +136,6 @@ export class UserService {
                 email: data.email,
                 valid: true,
             });
-            // if (!checkEmail) {
-            //     throw new UserNotFoundException(
-            //         "oops,it seems you don't have an account or you have already verified your email",
-            //     );
-            // }
             const token = uuidv4().split('-').join('');
             const expiry = Date.now() + 1440 * 60 * 1000;
             // update the emailver row if the phone number already exists else create a new one
@@ -409,11 +404,6 @@ export class UserService {
                 if (isBeneficiaryAdded) {
                     throw new BeneficiaryAlreadyAddedException();
                 }
-                // for (const beneficiary of userBeneficiariesArr) {
-                //     if (beneficiary.email === findBeneficiary.email) {
-                //         throw new BeneficiaryAlreadyAddedException();
-                //     }
-                // }
                 // exclude certain fields the user should not see and add the beneficiary
                 findBeneficiary = excludeFields(
                     [

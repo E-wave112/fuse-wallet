@@ -163,8 +163,8 @@ export class WalletService {
 
         const payload = {
             tx_ref: ref, //This is a unique reference, unique to the particular transaction being carried out. It is generated when it is not provided by the merchant for every transaction.
-            amount: data.amount, //This is the amount to be charged.
-            account_bank: this.getBankCode(data.account_bank), //This is the Bank numeric code. You can get a list of supported banks and their respective codes Here: https://developer.flutterwave.com/v3.0/reference#get-all-banks
+            amount: data.amount,
+            account_bank: this.getBankCode(data.account_bank),
             account_number: data.accountNumber,
             currency: 'NGN',
             email: wallet.user.email,
@@ -224,13 +224,12 @@ export class WalletService {
         const payload: FlutterwaveWithdrawDto = {
             tx_ref: ref, //This is a unique reference, unique to the particular transaction being carried out. It is generated when it is not provided by the merchant for every transaction.
             amount: data.amount, //This is the amount to be charged.
-            account_bank: this.getBankCode(data.account_bank), //This is the Bank numeric code. You can get a list of supported banks and their respective codes Here: https://developer.flutterwave.com/v3.0/reference#get-all-banks
+            account_bank: this.getBankCode(data.account_bank),
             account_number: data.accountNumber,
             currency: 'NGN',
             email: wallet.user.email,
             fullname: `${wallet.user.firstName} ${wallet.user.lastName}`,
             narration: 'funding my bank account',
-            // reference: 'transfer-' + Date.now(), //This is a merchant's unique reference for the transfer, it can be used to query for the status of the transfer
             callback_url: this.configService.get('WEBHOOK_URL'),
             meta: {},
             debit_currency: 'NGN',
@@ -249,11 +248,7 @@ export class WalletService {
         const withdrawal = await this.flutterwaveWithdraw(payload);
         if (withdrawal.status === 'success') {
             withdrawal.message = `Yikes!, you have successfully withdrawn ${data.amount} tokens from your wallet`;
-            // wallet.balance = wallet.balance - Number(data.amount);
             await this.updateWalletBalance(-Number(data.amount), wallet);
-            // wallet.balance -= Number(data.amount);
-
-            // await wallet.save();
 
             const transactionObj: TransactionDto = {
                 user: user.userId,
@@ -288,7 +283,6 @@ export class WalletService {
                 senderWallet,
             );
             if (!funds) throw new InsufficientTokensException();
-            // find the receiver wallet
 
             // check if the transaction pin is correct
             const checkTransactionPin =
@@ -296,6 +290,7 @@ export class WalletService {
                     userId: data.user.userId,
                     pin: data.transactionPin,
                 });
+            // find the receiver wallet
             const receiverUser = await this.userService.findUserByEmail(
                 data.receiver,
             );
@@ -304,16 +299,7 @@ export class WalletService {
                 where: { user: { id: receiverUser.id } },
             });
             await this.updateWalletBalance(-Number(data.amount), senderWallet);
-            // senderWallet.balance -= Number(data.amount);
             await this.updateWalletBalance(Number(data.amount), receiverWallet);
-            // receiverWallet.balance += Number(data.amount);
-            // const updateWalletBalance = [
-            //     await senderWallet.save(),
-            //     await receiverWallet.save(),
-            // ];
-            // Promise.all(updateWalletBalance).then((values) => {
-            //     console.log('values:::', values);
-            // });
 
             const transactionObjSender: TransactionDto = {
                 user: data.user.userId,

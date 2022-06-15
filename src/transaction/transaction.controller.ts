@@ -27,8 +27,6 @@ export class TransactionController {
     async verifyWebhook(@UserDecorator() user: any, @Body() body, @Req() req) {
         const data = new VerifyWebhookDto();
         data.headers = req.headers['verif-hash'];
-        console.log(req.body);
-        // return req.body.data.id;
         const hash = configService.get('WEBHOOK_HASH');
         data.hash = hash;
         data.body = req.body;
