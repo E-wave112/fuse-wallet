@@ -15,10 +15,10 @@ describe('AppController (e2e)', () => {
         await app.init();
     });
 
-    it('/ (GET)', () => {
+    it('/api/v1 (GET)', () => {
         return request(app.getHttpServer())
-            .get('/')
+            .get('/api/v1')
             .expect(200)
-            .expect('Hello World!');
+            .expect('Welcome to fuse wallets!, please go to this url https://documenter.getpostman.com/view/11690328/UzBiNnzU to view our documentation');
     });
 });
