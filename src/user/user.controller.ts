@@ -161,4 +161,13 @@ export class UserController {
     ) {
         return await this.userService.deleteBeneficiary(users.userId, body);
     }
+
+    @UseGuards(UserAuthGuard)
+    @Get('beneficiary/one')
+    async getSingleBeneficiary(
+        @UserDecorator() users: any,
+        @Body() body: BeneficiaryDto,
+    ) {
+        return await this.userService.checkBeneficiary(users.userId, body);
+    }
 }

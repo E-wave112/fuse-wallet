@@ -85,8 +85,6 @@ export class TransactionService {
                     Number(data.body.amount),
                     findWallet,
                 );
-                // findWallet.balance += Number(data.body.amount);
-                // await findWallet.save();
             } else if (data.body.status === 'failed') {
                 singleTransaction.status = TransactionStatus.FAILED;
                 singleTransaction.narration = 'Transaction failed';

@@ -1,4 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { forwardRef } from '@nestjs/common';
 import { TransactionModule } from '../transaction/transaction.module';
 import { AppModule } from '../app.module';
 import { WalletService } from './wallet.service';
@@ -21,6 +22,9 @@ import {
 import { TransactionService } from '../transaction/transaction.service';
 import { Transactions } from '../transaction/entities/transaction.entity';
 import { ConfigService } from '@nestjs/config';
+import { MailModule } from '../mail/mail.module';
+import { MailService } from '../mail/mail.service';
+import { WalletModule } from './wallet.module';
 jest.setTimeout(30000);
 
 describe('WalletService', () => {
@@ -33,11 +37,17 @@ describe('WalletService', () => {
             imports: [
                 AppModule,
                 AuthModule,
-                TransactionModule,
+                forwardRef(() => TransactionModule),
                 UserModule,
                 TypeOrmModule.forFeature([Wallet, Transactions]),
+                MailModule,
             ],
-            providers: [WalletService, TransactionService, ConfigService],
+            providers: [
+                WalletService,
+                TransactionService,
+                ConfigService,
+                MailService,
+            ],
         }).compile();
 
         service = module.get<WalletService>(WalletService);
@@ -72,7 +82,6 @@ describe('WalletService', () => {
                     authorization: {},
                     pin: fund.pin,
                     otp: fund.otp,
-                    meta: {},
                     callback_url: configService.get('WEBHOOK_URL'),
                 };
 
@@ -113,7 +122,6 @@ describe('WalletService', () => {
                     amount: 3000,
                     account_bank: 'United Bank for Africa',
                     accountNumber: '0690000037',
-                    transactionPin: '2000',
                 };
                 const flutterwavePayload: FlutterwaveChargeBankDto = {
                     tx_ref: `ref-withdraw-${Date.now()}`, //This is a unique reference, unique to the particular transaction being carried out. It is generated when it is not provided by the merchant for every transaction.
@@ -123,7 +131,6 @@ describe('WalletService', () => {
                     currency: 'NGN',
                     email: 'eddy@gmail.com',
                     fullname: `Edmond Kirsch`,
-                    meta: {},
                     callback_url: configService.get('WEBHOOK_URL'),
                 };
 

@@ -502,6 +502,7 @@ export class UserService {
             return {
                 statusCode: 200,
                 message: 'beneficiary found successfully!',
+                data: findBeneficiary,
             };
         } catch (error) {
             console.error(error.message);

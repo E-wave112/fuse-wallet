@@ -5,7 +5,7 @@ A wallet system API where users can perform transactions
 - A security private key will be generated for users on sign up
 - Abilities for users to be able to fund (with either card or bank transfer) and withdraw money to their wallet using the [Flutterwave](https://flutterwave.com/us/) payment gateway.
 - users will be able to add, view and delete beneficiaries
-- users will be able to perform peer to peer transactions to any of their beneficiaries
+- users will be able to perform peer to peer transactions to any of their beneficiaries and withdraw from their wallet using the transaction pin.
 - users can only use that security key for recovering their transaction pin.
 - The security key has to be kept in an ultrasafe manner as there is no way for users to recover their account once they lose the key
 

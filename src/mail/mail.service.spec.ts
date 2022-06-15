@@ -35,10 +35,10 @@ describe('MailService', () => {
 
             try {
                 const emailInitSpyService = jest.spyOn(
-                    MailService,
+                    service,
                     'sendgridConfig',
                 );
-                const emailSpyService = jest.spyOn(MailService, 'send');
+                const emailSpyService = jest.spyOn(service, 'send');
                 expect(emailSpyService).toBeCalledWith(testEmail);
                 expect(emailInitSpyService).toHaveBeenCalled();
             } catch (error) {

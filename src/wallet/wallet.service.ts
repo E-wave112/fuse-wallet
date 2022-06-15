@@ -298,6 +298,10 @@ export class WalletService {
             const receiverWallet = await this.checkIfWalletExists({
                 where: { user: { id: receiverUser.id } },
             });
+            // check if receiver is a beneficiary
+            await this.userService.checkBeneficiary(data.user.userId, {
+                email: data.receiver,
+            });
             await this.updateWalletBalance(-Number(data.amount), senderWallet);
             await this.updateWalletBalance(Number(data.amount), receiverWallet);
 
