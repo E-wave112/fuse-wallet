@@ -104,8 +104,9 @@ export class UserController {
 
     @UseGuards(UserAuthGuard)
     @Post('send-verification-email')
-    async sendVerificationEmail(@UserDecorator() users: any) {
-        const getUser = await this.userService.findUserById(users.userId);
+    async sendVerificationEmail(@UserDecorator() user: any) {
+        const getUser = await this.view(user);
+        console.log(getUser);
         return await this.userService.requestVerifyEmail({
             firstName: getUser.firstName,
             lastName: getUser.lastName,

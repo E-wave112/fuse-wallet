@@ -38,7 +38,4 @@ export class FlutterwaveChargeBankDto {
     @IsNotEmpty()
     @IsString()
     callback_url: string;
-
-    @IsObject()
-    meta: Record<any, unknown>;
 }

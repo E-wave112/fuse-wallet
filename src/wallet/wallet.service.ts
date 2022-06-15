@@ -78,9 +78,7 @@ export class WalletService {
 
     async fundWalletWithCard(user: any, data: FundWalletByCardDto) {
         // get the user card details from the req.user object
-        const ref = `funded-${Math.floor(Math.random() * 10000000 + 1)}-${
-            user.userId
-        }`;
+        const ref = `funded-${user.userId}`;
         const wallet = await this.checkIfWalletExists({
             where: { user: { id: user.userId } },
         });
@@ -106,9 +104,6 @@ export class WalletService {
             authorization: {},
             pin: data.pin,
             otp: data.otp,
-            meta: {
-                user_id: user,
-            },
             callback_url: this.configService.get('WEBHOOK_URL'),
         };
 
@@ -149,9 +144,7 @@ export class WalletService {
     }
 
     async fundWalletByBank(user: any, data: FundWalletByBanktDto) {
-        const ref = `funded-${Math.floor(Math.random() * 10000000 + 1)}-${
-            user.userId
-        }`;
+        const ref = `funded-${user.userId}`;
 
         const wallet = await this.checkIfWalletExists({
             where: { user: { id: user.userId } },
@@ -170,15 +163,8 @@ export class WalletService {
             currency: 'NGN',
             email: wallet.user.email,
             fullname: `${wallet.user.firstName} ${wallet.user.lastName}`,
-            meta: {
-                user_id: user,
-            },
             callback_url: this.configService.get('WEBHOOK_URL'),
         };
-
-        // check if the amount is greater than the balance by more than the minimum wallet balance
-        const funds = this.checkSufficientFunds(Number(data.amount), wallet);
-        if (!funds) throw new InsufficientTokensException();
 
         const fundedBank = await this.flutterwaveChargeBank(payload);
         if (fundedBank.status === 'success') {
@@ -220,9 +206,7 @@ export class WalletService {
     }
 
     async withdrawFromWallet(user: any, data: WithdrawWalletDto) {
-        const ref = `withdraw-${Math.floor(Math.random() * 10000000 + 1)}-${
-            user.userId
-        }`;
+        const ref = `withdraw-${user.userId}`;
 
         const wallet = await this.checkIfWalletExists({
             where: { user: { id: user.userId } },

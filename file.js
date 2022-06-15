@@ -12,3 +12,16 @@ for (const beneficiary of arl) {
     }
 }
 console.log(arl);
+
+let reg = new RegExp(
+    '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+);
+
+let text = 'funded-32ecd7f0-ebf2-474c-b7df-84420ecd8840';
+
+// try to match the regex.
+let result = text.substring(7, text.length);
+console.log(result);
+let objA = {}
+let objB = {}
+console.log(objA == objB);

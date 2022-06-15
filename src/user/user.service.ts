@@ -16,6 +16,7 @@ import {
     BeneficiaryAlreadyAddedException,
     CannotAddSelfException,
     NoBeneficiariesException,
+    BeneficiaryNotFoundException,
 } from '../exceptions';
 import {
     Compare,
@@ -121,11 +122,11 @@ export class UserService {
                 email: data.email,
                 valid: true,
             });
-            if (!checkEmail) {
-                throw new UserNotFoundException(
-                    "oops,it seems you don't have an account or you have already verified your email",
-                );
-            }
+            // if (!checkEmail) {
+            //     throw new UserNotFoundException(
+            //         "oops,it seems you don't have an account or you have already verified your email",
+            //     );
+            // }
             const token = uuidv4().split('-').join('');
             const expiry = Date.now() + 1440 * 60 * 1000;
             // update the emailver row if the phone number already exists else create a new one
@@ -376,12 +377,8 @@ export class UserService {
     async addBeneficiary(id: string, data: BeneficiaryDto) {
         try {
             const findUser: User = await this.findUserById(id);
-            if (!findUser.beneficiaries) {
-                findUser.beneficiaries = '[]';
-                await findUser.save();
-            }
             //check if beneficiary already exists
-            const findBeneficiary = await this.UserRepository.findOne({
+            let findBeneficiary = await this.UserRepository.findOne({
                 email: data.email,
             });
             if (findBeneficiary) {
@@ -393,40 +390,22 @@ export class UserService {
                 const userBeneficiaries = findUser.beneficiaries;
                 // convert the beneficiaries string to an array representation
                 const userBeneficiariesArr = stringToArray(userBeneficiaries);
-                for (const beneficiary of userBeneficiariesArr) {
-                    if (beneficiary.email === findBeneficiary.email) {
-                        throw new BeneficiaryAlreadyAddedException();
-                    }
-                }
-                // add beneficiary
-                userBeneficiariesArr.push(findBeneficiary);
-                // convert back to string before saving to db
-                findUser.beneficiaries = arrayToString(userBeneficiariesArr);
-                await findUser.save();
-                return {
-                    statusCode: 200,
-                    message: 'beneficiary added successfully!',
-                };
-            } else {
-                throw new UserNotFoundException(
-                    "this beneficiary doesn't exist!",
+                // check if the beneficiary is already added
+                const isBeneficiaryAdded = userBeneficiariesArr.find(
+                    (beneficiary) => {
+                        return beneficiary.email === findBeneficiary.email;
+                    },
                 );
-            }
-        } catch (error) {
-            console.error(error.message);
-            throw new BadRequestException(error.message);
-        }
-    }
-
-    async viewAllUserBeneficiaries(id: string) {
-        try {
-            const findUser: User = await this.findUserById(id);
-            const beneficiaries = stringToArray(findUser.beneficiaries);
-            if (!beneficiaries || beneficiaries === []) {
-                throw new NoBeneficiariesException();
-            }
-            for (let beneficiary of beneficiaries) {
-                beneficiary = excludeFields(
+                if (isBeneficiaryAdded) {
+                    throw new BeneficiaryAlreadyAddedException();
+                }
+                // for (const beneficiary of userBeneficiariesArr) {
+                //     if (beneficiary.email === findBeneficiary.email) {
+                //         throw new BeneficiaryAlreadyAddedException();
+                //     }
+                // }
+                // exclude certain fields the user should not see and add the beneficiary
+                findBeneficiary = excludeFields(
                     [
                         'pin',
                         'transactionPin',
@@ -443,9 +422,36 @@ export class UserService {
                         'deviceModel',
                         'verified',
                         'platform',
+                        'lastLoggedIn',
+                        'createdAt',
+                        'updatedAt',
+                        'id',
                     ],
-                    beneficiary,
+                    findBeneficiary,
                 );
+                userBeneficiariesArr.push(findBeneficiary);
+                // convert back to string before saving to db
+                findUser.beneficiaries = arrayToString(userBeneficiariesArr);
+                await findUser.save();
+                return {
+                    statusCode: 200,
+                    message: 'beneficiary added successfully!',
+                };
+            } else {
+                throw new UserNotFoundException();
+            }
+        } catch (error) {
+            console.error(error.message);
+            throw new BadRequestException(error.message);
+        }
+    }
+
+    async viewAllUserBeneficiaries(id: string) {
+        try {
+            const findUser: User = await this.findUserById(id);
+            const beneficiaries = stringToArray(findUser.beneficiaries);
+            if (beneficiaries.length === 0) {
+                throw new NoBeneficiariesException();
             }
             return {
                 statusCode: 200,
@@ -462,12 +468,16 @@ export class UserService {
         try {
             const findUser: User = await this.findUserById(id);
             const beneficiaries = stringToArray(findUser.beneficiaries);
-            for (const beneficiary of beneficiaries) {
-                if (beneficiary.email === data.email) {
-                    beneficiaries.splice(beneficiaries.indexOf(beneficiary), 1);
-                    findUser.beneficiaries = arrayToString(beneficiaries);
-                }
+            const findBeneficiary = beneficiaries.find((beneficiary) => {
+                return beneficiary.email === data.email;
+            });
+            if (!findBeneficiary) {
+                throw new BeneficiaryNotFoundException();
             }
+            // remove the beneficiary from the array
+            beneficiaries.splice(beneficiaries.indexOf(findBeneficiary), 1);
+            // convert back to string before saving to db
+            findUser.beneficiaries = arrayToString(beneficiaries);
             await findUser.save();
             return {
                 statusCode: 200,
@@ -475,9 +485,7 @@ export class UserService {
             };
         } catch (error) {
             console.error(error.message);
-            throw new UserNotFoundException(
-                'this user is not your beneficary!',
-            );
+            throw new BeneficiaryNotFoundException(error.message);
         }
     }
 
@@ -485,18 +493,19 @@ export class UserService {
         try {
             const findUser: User = await this.findUserById(id);
             const beneficiaries = stringToArray(findUser.beneficiaries);
-            for (const beneficiary of beneficiaries) {
-                if (beneficiary.email === data.email) {
-                    return {
-                        statusCode: 200,
-                        message: 'beneficiary found!',
-                    };
-                }
+            const findBeneficiary = beneficiaries.find((beneficiary) => {
+                return beneficiary.email === data.email;
+            });
+            if (!findBeneficiary) {
+                throw new BeneficiaryNotFoundException();
             }
-            throw new UserNotFoundException('beneficiary not found!');
+            return {
+                statusCode: 200,
+                message: 'beneficiary found successfully!',
+            };
         } catch (error) {
             console.error(error.message);
-            throw new UserNotFoundException(error.message);
+            throw new BeneficiaryNotFoundException(error.message);
         }
     }
 }
