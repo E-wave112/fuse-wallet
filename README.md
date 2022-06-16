@@ -6,6 +6,7 @@ A wallet system API developed with NestJS, MySQL and typeorm
 - Abilities for users to be able to fund (with either card or bank transfer) and withdraw money to their wallet using the [Flutterwave](https://flutterwave.com/us/) payment gateway.
 - users will be able to add, view and delete beneficiaries
 - users will be able to perform peer to peer transactions to any of their beneficiaries and withdraw from their wallet using the transaction pin.
+- during the peer to peer transaction, the sender and receiver (sender's beneficiary) will receive email notifications of the transaction.
 - users can only use that security key for recovering their transaction pin.
 - The security key has to be kept in an ultrasafe manner as there is no way for users to recover their account once they lose the key
 
@@ -33,4 +34,5 @@ or
 ```
 $ yarn start:dev
 ```
+the server will be running on http://localhost:8000
 
