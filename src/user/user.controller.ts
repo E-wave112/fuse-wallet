@@ -138,7 +138,7 @@ export class UserController {
     }
 
     @UseGuards(UserAuthGuard)
-    @Put('change-trnsaction pin')
+    @Put('change-transaction pin')
     async updateUserTransactionPin(
         @Body() body: ChangePinDto,
         @UserDecorator() users: any,
