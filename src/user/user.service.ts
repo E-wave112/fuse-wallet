@@ -38,6 +38,7 @@ import { PrivateKeyDto } from './dto/private-key.dto';
 import { ResetTransactionPinDto } from './dto/reset-transaction-pin.dto';
 import { ValidatePinDto } from './dto/validate-pin.dto';
 import { BeneficiaryDto } from './dto/beneficiary.dto';
+import { ChangeTransactionPinDto } from './dto/change-transaction-pin.dto';
 
 @Injectable()
 export class UserService {
@@ -370,7 +371,7 @@ export class UserService {
         }
     }
 
-    async updateTransactionPin(data: ChangePinDto, id: string) {
+    async updateTransactionPin(data: ChangeTransactionPinDto, id: string) {
         try {
             const user = await this.findUserById(id);
             if (!(await Compare(data.oldPin, user.transactionPin)))
