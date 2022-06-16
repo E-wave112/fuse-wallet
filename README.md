@@ -1,5 +1,5 @@
 # fuse-wallet
-A wallet system API developed with NestJS and typeorm 
+A wallet system API developed with NestJS, MySQL and typeorm 
 
 ## This API assumes the following functionalities and constraints to enforce security and integrity
 - A security private key will be generated for users on sign up

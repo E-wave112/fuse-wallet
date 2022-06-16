@@ -16,7 +16,7 @@ import { ConfigService } from '@nestjs/config';
         AuthModule,
     ],
     controllers: [TransactionController],
-    providers: [TransactionService, ConfigService],
-    exports: [TransactionService],
+    providers: [TransactionService, ConfigService, Transactions],
+    exports: [TransactionService, Transactions],
 })
 export class TransactionModule {}

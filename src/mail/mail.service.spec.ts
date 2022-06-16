@@ -3,7 +3,7 @@ import { MailService } from './mail.service';
 import { EmailOption } from './types/mail.types';
 import { mailStructure } from './interface-send/mail.send';
 import { ConfigService } from '@nestjs/config';
-jest.setTimeout(30000);
+jest.setTimeout(60000);
 
 describe('MailService', () => {
     let service: MailService;

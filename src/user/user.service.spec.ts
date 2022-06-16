@@ -25,7 +25,7 @@ import { ResetTransactionPinDto } from './dto/reset-transaction-pin.dto';
 import { stringToArray, arrayToString, excludeFields } from '../utils';
 import { BeneficiaryDto } from './dto/beneficiary.dto';
 
-jest.setTimeout(30000);
+jest.setTimeout(60000);
 
 describe('UserService', () => {
     let service: UserService;

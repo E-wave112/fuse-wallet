@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as SendGrid from '@sendgrid/mail';
 import { EmailOption } from './types/mail.types';
 import configuration from '../config/configuration';
+import { InternalErrorException } from '../exceptions';
 const configService: ConfigService = new ConfigService(configuration);
 
 @Injectable()
@@ -29,8 +30,7 @@ export class MailService {
                 return await sendGridSend.send(message);
             }
         } catch (error) {
-            
-            throw error;
+            throw new InternalErrorException(error.message);
         }
     }
 }
