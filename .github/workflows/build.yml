@@ -1,4 +1,4 @@
-name: Running Code Coverage
+name: build
 
 on:
   push:
@@ -18,29 +18,27 @@ jobs:
         node-version: [14.x, 16.x, 17.x, 18.x]
 
     steps:
-      - name: Make envfile
-        uses: SpicyPizza/create-envfile@v1.3
-        with:
-          envkey_DEBUG: false
-          envkey_SECRET_KEY: ${{ secrets.SECRET_KEY }}
-          envkey_NODE_ENV: ${{ secrets.NODE_ENV }}
-          envkey_DB_URI: ${{ secrets.DB_URI }}
-          envkey_WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }}
-          envkey_WEBHOOK_HASH: ${{ secrets.WEBHOOK_HASH }}
-          envkey_PORT: ${{ secrets.PORT }}
-          envkey_API_BASE_URL: ${{ secrets.API_BASE_URL }}
-          envkey_EXPIRES_IN: ${{ secrets.EXPIRES_IN }}
-          envkey_TEMPLATE_RESET_PIN: ${{ secrets.TEMPLATE_RESET_PIN }}
-          envkey_TEMPLATE_VERIFY_ACCOUNT: ${{ secrets.TEMPLATE_VERIFY_ACCOUNT }}
-          envkey_TEMPLATE_TRANSFER_ID: ${{ secrets.TEMPLATE_TRANSFER_ID }}
-          envkey_TEMPLATE_RECEIVED_ID: ${{ secrets.TEMPLATE_RECEIVED_ID }}
-          envkey_SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }}
-          envkey_FLW_SECRET_KEY: ${{ secrets.FLW_SECRET_KEY }}
-          envkey_FLW_PUBLIC_KEY: ${{ secrets.FLW_PUBLIC_KEY }}
-          envkey_FLW_ENCRYPTION_KEY: ${{ secrets.FLW_ENCRYPTION_KEY }}
-          file_name: .env
-          fail_on_empty: false
-
+      - name: Create envfile
+        run: |
+          touch .env
+          echo DEBUG: false >> .env
+          echo SECRET_KEY: ${{ secrets.SECRET_KEY }} >> .env
+          echo NODE_ENV: ${{ secrets.NODE_ENV }} >> .env
+          echo DB_URI: ${{ secrets.DB_URI }} >> .env
+          echo WEBHOOK_URL: ${{ secrets.WEBHOOK_URL }} >> .env
+          echo WEBHOOK_HASH: ${{ secrets.WEBHOOK_HASH }} >> .env
+          echo PORT: ${{ secrets.PORT }} >> .env
+          echo API_BASE_URL: ${{ secrets.API_BASE_URL }} >> .env
+          echo EXPIRES_IN: ${{ secrets.EXPIRES_IN }} >> .env
+          echo TEMPLATE_RESET_PIN: ${{ secrets.TEMPLATE_RESET_PIN }} >> .env
+          echo TEMPLATE_VERIFY_ACCOUNT: ${{ secrets.TEMPLATE_VERIFY_ACCOUNT }} >> .env
+          echo TEMPLATE_TRANSFER_ID: ${{ secrets.TEMPLATE_TRANSFER_ID }} >> .env
+          echo TEMPLATE_RECEIVED_ID: ${{ secrets.TEMPLATE_RECEIVED_ID }} >> .env
+          echo SENDGRID_API_KEY: ${{ secrets.SENDGRID_API_KEY }} >> .env
+          echo FLW_SECRET_KEY: ${{ secrets.FLW_SECRET_KEY }} >> .env
+          echo FLW_PUBLIC_KEY: ${{ secrets.FLW_PUBLIC_KEY }} >> .env
+          echo FLW_ENCRYPTION_KEY: ${{ secrets.FLW_ENCRYPTION_KEY }} >> .env
+          cat .env
       - name: Checkout repository
         uses: actions/checkout@v2
         with:
