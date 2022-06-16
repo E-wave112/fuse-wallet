@@ -106,7 +106,6 @@ export class UserController {
     @Post('send-verification-email')
     async sendVerificationEmail(@UserDecorator() user: any) {
         const getUser = await this.view(user);
-        console.log(getUser);
         return await this.userService.requestVerifyEmail({
             firstName: getUser.firstName,
             lastName: getUser.lastName,

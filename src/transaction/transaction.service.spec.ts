@@ -15,7 +15,8 @@ import { WalletModule } from '../wallet/wallet.module';
 import { WalletService } from '../wallet/wallet.service';
 import { VerifyWebhookDto } from './dto/verify-webhook.dto';
 import { stripString } from '../utils';
-jest.setTimeout(30000);
+jest.setTimeout(60000);
+jest.mock('../wallet/wallet.service');
 
 describe('TransactionService', () => {
     let service: TransactionService;

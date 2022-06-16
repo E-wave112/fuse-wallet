@@ -37,7 +37,6 @@ export class AuthService {
                 user,
             };
         } catch (err) {
-            console.error(err.message);
             throw new BadRequestException(err.message);
         }
     }
@@ -74,7 +73,6 @@ export class AuthService {
                 privateKey: privateKey,
             };
         } catch (err) {
-            console.error(err.message);
             throw new DataConflictException(err.message);
         }
     }

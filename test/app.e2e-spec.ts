@@ -19,6 +19,8 @@ describe('AppController (e2e)', () => {
         return request(app.getHttpServer())
             .get('/api/v1')
             .expect(200)
-            .expect('Welcome to fuse wallets!, please go to this url https://documenter.getpostman.com/view/11690328/UzBiNnzU to view our documentation');
+            .expect(
+                'Welcome to fuse wallets!, please go to this url https://documenter.getpostman.com/view/11690328/UzBiNnzU to view our documentation',
+            );
     });
 });

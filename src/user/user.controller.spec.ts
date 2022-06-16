@@ -27,7 +27,7 @@ import { PrivateKeyDto } from './dto/private-key.dto';
 import { ResetTransactionPinDto } from './dto/reset-transaction-pin.dto';
 import { BeneficiaryDto } from './dto/beneficiary.dto';
 
-jest.setTimeout(30000);
+jest.setTimeout(60000);
 
 describe('UserController', () => {
     let controller: UserController;

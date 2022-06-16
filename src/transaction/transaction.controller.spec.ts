@@ -7,12 +7,10 @@ import { TransactionService } from './transaction.service';
 import { UserAuthGuard } from '../auth/guards';
 import { Transactions } from './entities/transaction.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { WalletService } from '../wallet/wallet.service';
 import { v4 as uuidv4 } from 'uuid';
 import { VerifyWebhookDto } from './dto/verify-webhook.dto';
 import { WalletModule } from '../wallet/wallet.module';
-import { Wallet } from '../wallet/entities/wallet.entity';
-jest.setTimeout(30000);
+jest.setTimeout(60000);
 
 describe('TransactionController', () => {
     let controller: TransactionController;
@@ -28,7 +26,7 @@ describe('TransactionController', () => {
                 TypeOrmModule.forFeature([Transactions]),
             ],
             controllers: [TransactionController],
-            providers: [TransactionService, WalletService, Wallet],
+            providers: [TransactionService],
         }).compile();
 
         controller = module.get<TransactionController>(TransactionController);

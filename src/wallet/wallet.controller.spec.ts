@@ -10,11 +10,10 @@ import { UserAuthGuard } from '../auth/guards';
 import { v4 as uuidv4 } from 'uuid';
 import { TransactionModule } from '../transaction/transaction.module';
 import { FundWalletByCardDto } from './dto/fund-wallet-card.dto';
-import { FundWalletByBanktDto } from './dto/fund-wallet-bank.dto';
 import { WalletService } from './wallet.service';
-import { Transactions } from '../transaction/entities/transaction.entity';
 import { WithdrawWalletDto } from './dto/withraw-wallet.dto';
-jest.setTimeout(30000);
+import { MailModule } from '../mail/mail.module';
+jest.setTimeout(60000);
 
 describe('WalletController', () => {
     let controller: WalletController;
@@ -27,7 +26,8 @@ describe('WalletController', () => {
                 AuthModule,
                 UserModule,
                 forwardRef(() => TransactionModule),
-                TypeOrmModule.forFeature([Wallet, Transactions]),
+                TypeOrmModule.forFeature([Wallet]),
+                MailModule,
             ],
             controllers: [WalletController],
             providers: [WalletService],
@@ -56,12 +56,13 @@ describe('WalletController', () => {
                 };
                 const type = 'card';
                 const result = await controller.fundWallet(fund, type, user);
-                const serviceResult = await service.fundWalletWithCard(
+                const serviceResult = await service.reconcileFundMethod(
                     user,
+                    type,
                     fund,
                 );
                 expect(result).toBeCalledWith(fund, user);
-                expect(serviceResult).toHaveBeenCalledWith(fund, user);
+                expect(serviceResult).toHaveBeenCalledWith(user, type, fund);
                 expect(guard).toBeInstanceOf(UserAuthGuard);
             } catch (error) {
                 expect(error).toBeInstanceOf(Error);

@@ -7,7 +7,7 @@ import { UserModule } from '../user/user.module';
 import { User } from '../user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-jest.setTimeout(30000);
+jest.setTimeout(60000);
 
 describe('AuthService', () => {
     let service: AuthService;

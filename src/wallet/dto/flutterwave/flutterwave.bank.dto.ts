@@ -1,10 +1,4 @@
-import {
-    IsString,
-    IsNumber,
-    IsNotEmpty,
-    IsEmail,
-    IsObject,
-} from 'class-validator';
+import { IsString, IsNumber, IsNotEmpty, IsEmail } from 'class-validator';
 export class FlutterwaveChargeBankDto {
     @IsNotEmpty()
     @IsString()
