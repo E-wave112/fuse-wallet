@@ -138,6 +138,15 @@ export class UserController {
     }
 
     @UseGuards(UserAuthGuard)
+    @Put('change-trnsaction pin')
+    async updateUserTransactionPin(
+        @Body() body: ChangePinDto,
+        @UserDecorator() users: any,
+    ) {
+        return await this.userService.updateTransactionPin(body, users.userId);
+    }
+
+    @UseGuards(UserAuthGuard)
     @Get('beneficaries/me')
     async getUserBeneficaries(@UserDecorator() users: any) {
         return await this.userService.viewAllUserBeneficiaries(users.userId);
