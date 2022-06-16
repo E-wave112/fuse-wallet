@@ -109,8 +109,10 @@ export class UserService {
     async updateUser(id: string, user: Partial<User>) {
         try {
             const singleUser = await this.findUserById(id);
-            if (user.pin) {
-                user.pin = hashCred(user.pin);
+            if (user.pin || user.transactionPin) {
+                throw new BadRequestException(
+                    'try updating your tokens/pins in their specific endpoints',
+                );
             }
             const updatedUser = await this.UserRepository.save({
                 id: singleUser.id,
@@ -365,6 +367,28 @@ export class UserService {
             };
         } catch (error) {
             throw new BadRequestException(error.message);
+        }
+    }
+
+    async updateTransactionPin(data: ChangePinDto, id: string) {
+        try {
+            const user = await this.findUserById(id);
+            if (!(await Compare(data.oldPin, user.transactionPin)))
+                throw new IncorrectCredentialsException(
+                    'incorrect transaction pin!',
+                );
+
+            if (data.newPin !== data.confirmPin)
+                throw new IncorrectCredentialsException('Pin mismatch!');
+
+            user.transactionPin = hashCred(data.newPin);
+            await user.save();
+            return {
+                statusCode: 200,
+                message: 'transaction pin updated successfully',
+            };
+        } catch (error) {
+            throw new IncorrectCredentialsException(error.message);
         }
     }
 
