@@ -108,7 +108,6 @@ describe('WalletService', () => {
                     newTransaction,
                 );
             } catch (error) {
-                console.error(error);
                 expect(error).toBeInstanceOf(Error);
             }
         });
@@ -157,7 +156,6 @@ describe('WalletService', () => {
                     newTransaction,
                 );
             } catch (error) {
-                console.error(error);
                 expect(error).toBeInstanceOf(Error);
             }
         });

@@ -29,7 +29,7 @@ export class MailService {
                 return await sendGridSend.send(message);
             }
         } catch (error) {
-            console.error(error);
+            
             throw error;
         }
     }

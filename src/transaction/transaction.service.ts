@@ -32,7 +32,6 @@ export class TransactionService {
             await this.TransactionsRepository.save(newTransaction);
             return newTransaction;
         } catch (err: any) {
-            console.error(err);
             throw new InternalErrorException(err.message);
         }
     }
@@ -92,7 +91,6 @@ export class TransactionService {
             await this.TransactionsRepository.save(singleTransaction);
             return singleTransaction;
         } catch (error) {
-            console.error(error);
             throw new InternalErrorException(error.message);
         }
     }

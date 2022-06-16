@@ -48,7 +48,6 @@ export class WalletService {
         );
         try {
             const response = await flw.Charge.card(payload);
-            console.log(response);
             if (response.status === 'error') {
                 return response;
             }
@@ -68,7 +67,6 @@ export class WalletService {
                     otp: payload.otp,
                     flw_ref: reCallCharge.data.flw_ref,
                 });
-                // console.log(callValidate)
             }
             if (response.meta.authorization.mode === 'redirect') {
                 const url = response.meta.authorization.redirect;
@@ -77,7 +75,6 @@ export class WalletService {
 
             return response;
         } catch (error: any) {
-            console.error(error);
             throw new InternalErrorException(error.message);
         }
     }
@@ -144,7 +141,6 @@ export class WalletService {
             }
             return response;
         } catch (error: any) {
-            console.error(error);
             throw new InternalErrorException();
         }
     }
@@ -204,7 +200,6 @@ export class WalletService {
             }
             return response;
         } catch (error: any) {
-            console.error(error);
             throw new InternalErrorException(error.message);
         }
     }
@@ -375,7 +370,6 @@ export class WalletService {
                 senderWallet,
             };
         } catch (error) {
-            console.error(error.message);
             throw new InternalErrorException(error.message);
         }
     }
@@ -459,7 +453,6 @@ export class WalletService {
             if (!findWallet) throw new WalletNotFoundException();
             return findWallet;
         } catch (error) {
-            console.error(error);
             throw new WalletNotFoundException();
         }
     }
@@ -474,7 +467,6 @@ export class WalletService {
                 ? await this.fundWalletWithCard(user, data)
                 : await this.fundWalletByBank(user, data);
         } catch (error) {
-            console.error(error);
             throw new InternalErrorException(error.message);
         }
     }

@@ -68,7 +68,6 @@ export class UserService {
             }
             return singleUser[0];
         } catch (err) {
-            console.error(err);
             throw new BadRequestException('incorrect credentials!');
         }
     }
@@ -79,7 +78,6 @@ export class UserService {
             if (!singleUser) throw new UserNotFoundException();
             return singleUser;
         } catch (error) {
-            console.error(error.message);
             throw new BadRequestException(error.message);
         }
     }
@@ -92,7 +90,6 @@ export class UserService {
             if (!singleUser) throw new UserNotFoundException();
             return singleUser;
         } catch (error) {
-            console.error(error.message);
             throw new BadRequestException(error.message);
         }
     }
@@ -105,7 +102,6 @@ export class UserService {
             }
             return singleUser;
         } catch (error) {
-            console.error(error.message);
             throw new BadRequestException(error.message);
         }
     }
@@ -123,7 +119,6 @@ export class UserService {
 
             return { message: 'user updated successfully', updatedUser };
         } catch (err: any) {
-            console.error(err.message);
             throw new BadRequestException(err.message);
         }
     }
@@ -166,14 +161,12 @@ export class UserService {
                 },
             );
 
-            const sendgrid = await this.mailService.send(verifyEmail);
-            console.log(sendgrid);
+            await this.mailService.send(verifyEmail);
             return {
                 statusCode: 200,
                 message: 'Email verification link sent successfully!',
             };
         } catch (error) {
-            console.error(error.message);
             throw new BadRequestException(error.message);
         }
     }
@@ -217,7 +210,6 @@ export class UserService {
                 message: 'Email verified successfully!',
             };
         } catch (error) {
-            console.error(error.message);
             throw new BadRequestException(
                 'An error occurred!, it seems the link is invalid or this account has already been verified',
             );
@@ -240,7 +232,6 @@ export class UserService {
                 message: 'pin updated successfully',
             };
         } catch (error) {
-            console.error(error.message);
             throw new IncorrectCredentialsException(error.message);
         }
     }
@@ -265,7 +256,6 @@ export class UserService {
                 message: 'pin reset successful!',
             };
         } catch (error) {
-            console.error(error.message);
             throw new BadRequestException(error.message);
         }
     }
@@ -292,14 +282,12 @@ export class UserService {
                 },
             );
 
-            const sendgrid = await this.mailService.send(resetPin);
-            console.log(sendgrid);
+            await this.mailService.send(resetPin);
             return {
                 statusCode: 200,
                 message: 'Reset pin link sent successfully!',
             };
         } catch (error) {
-            console.error(error.message);
             throw new BadRequestException(error.message);
         }
     }
@@ -376,7 +364,6 @@ export class UserService {
                 message: 'transaction pin reset successfully!',
             };
         } catch (error) {
-            console.error(error.message);
             throw new BadRequestException(error.message);
         }
     }
@@ -441,7 +428,6 @@ export class UserService {
                 throw new UserNotFoundException();
             }
         } catch (error) {
-            console.error(error.message);
             throw new BadRequestException(error.message);
         }
     }
@@ -459,7 +445,6 @@ export class UserService {
                 beneficiaries,
             };
         } catch (error) {
-            console.error(error.message);
             throw new BadRequestException(error.message);
         }
     }
@@ -484,7 +469,6 @@ export class UserService {
                 message: 'beneficiary deleted successfully!',
             };
         } catch (error) {
-            console.error(error.message);
             throw new BeneficiaryNotFoundException(error.message);
         }
     }
@@ -505,7 +489,6 @@ export class UserService {
                 data: findBeneficiary,
             };
         } catch (error) {
-            console.error(error.message);
             throw new BeneficiaryNotFoundException(error.message);
         }
     }
