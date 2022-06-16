@@ -29,6 +29,7 @@ import { TransactionPinDto } from './dto/transaction-pin.dto';
 import { ResetTransactionPinDto } from './dto/reset-transaction-pin.dto';
 import { PrivateKeyDto } from './dto/private-key.dto';
 import { BeneficiaryDto } from './dto/beneficiary.dto';
+import { ChangeTransactionPinDto } from './dto/change-transaction-pin.dto';
 
 @Controller('user')
 export class UserController {
@@ -140,7 +141,7 @@ export class UserController {
     @UseGuards(UserAuthGuard)
     @Put('change-transaction-pin')
     async updateUserTransactionPin(
-        @Body() body: ChangePinDto,
+        @Body() body: ChangeTransactionPinDto,
         @UserDecorator() users: any,
     ) {
         return await this.userService.updateTransactionPin(body, users.userId);
