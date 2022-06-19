@@ -1,0 +1,40 @@
+version: "3.7"
+
+services:
+  web:
+    image: fuse
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    container_name: fuse-wallet
+    restart: always
+    ports:
+      - "${PORT}:${PORT}"
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - PORT=${PORT}
+      - SECRET_KEY=${SECRET_KEY}
+      - FLW_SECRET_KEY=${FLW_SECRET_KEY}
+      - FLW_PUBLIC_KEY=${FLW_PUBLIC_KEY}
+      - FLW_ENCRYPTION_KEY=${FLW_ENCRYPTION_KEY}
+      - CODECOV_TOKEN=${CODECOV_TOKEN}
+      - DB_URI=${DB_URI}
+      - SENDGRID_API_KEY=${SENDGRID_API_KEY}
+      - TEMPLATE_RESET_PIN=${TEMPLATE_RESET_PIN}
+      - TEMPLATE_VERIFY_ACCOUNT=${TEMPLATE_VERIFY_ACCOUNT}
+      - TEMPLATE_TRANSFER_ID=${TEMPLATE_TRANSFER_ID}
+      - TEMPLATE_RECEIVED_ID=${TEMPLATE_RECEIVED_ID}
+      - WEBHOOK_URL=${WEBHOOK_URL}
+      - WEBHOOK_HASH=${WEBHOOK_HASH}
+      - API_BASE_URL=${API_BASE_URL}
+    networks:
+      - fusewallet-network
+
+networks:
+  fusewallet-network:
+    name: fusewallet-network

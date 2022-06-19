@@ -34,5 +34,24 @@ or
 ```
 $ yarn start:dev
 ```
+
+### Dockerizing the development environment
+
+use the command below to build the docker image
+```
+docker-compose up --build
+```
+### Running the Dev Docker container
+
+To run the application, use the command below:
+
+```
+$ docker-compose up
+```
+
 the server will be running on http://localhost:8000
+
+### Next steps? deploy to dockerhub 
+
+- A useful resource on how to push your docker image to [DockerHub](https://hub.docker.com)  can be found [here](https://ropenscilabs.github.io/r-docker-tutorial/04-Dockerhub.html)
 
