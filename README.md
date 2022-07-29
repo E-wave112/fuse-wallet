@@ -1,7 +1,7 @@
 # fuse-wallet
 A wallet system API developed with NestJS, MySQL and typeorm 
 
-## This API assumes the following functionalities and constraints to enforce security and integrity
+### This API assumes the following functionalities and constraints to enforce security and integrity
 - A security private key will be generated for users on sign up
 - Abilities for users to be able to fund (with either card or bank transfer) and withdraw money to their wallet using the [Flutterwave](https://flutterwave.com/us/) payment gateway.
 - users will be able to add, view and delete beneficiaries
