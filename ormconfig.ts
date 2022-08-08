@@ -1,8 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { join } = require('path');
-// import { ConfigService } from '@nestjs/config';
-// import configuration from './src/config/configuration';
-// const configService: ConfigService = new ConfigService(configuration);
 
 module.exports = {
     type: 'mysql',

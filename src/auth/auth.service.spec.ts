@@ -6,12 +6,10 @@ import { AppModule } from '../app.module';
 import { UserModule } from '../user/user.module';
 import { User } from '../user/entities/user.entity';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
 jest.setTimeout(60000);
 
 describe('AuthService', () => {
     let service: AuthService;
-    let configService: ConfigService;
 
     beforeEach(async () => {
         const module: TestingModule = await Test.createTestingModule({
@@ -24,13 +22,11 @@ describe('AuthService', () => {
                         sign: jest.fn(() => true),
                     }),
                 },
-                ConfigService,
             ],
             imports: [AppModule, UserModule],
         }).compile();
 
         service = module.get<AuthService>(AuthService);
-        configService = module.get<ConfigService>(ConfigService);
     });
 
     describe('signup a user', () => {
