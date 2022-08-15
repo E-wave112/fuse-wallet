@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Wallet } from './entities/wallet.entity';
 import { ConfigService } from '@nestjs/config';
-import { MailService } from '../mail/mail.service';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const Flutterwave = require('flutterwave-node-v3');
 import {
@@ -30,6 +29,7 @@ import { WithdrawWalletDto } from './dto/withraw-wallet.dto';
 import { PeerTransferDto } from './dto/peer-transfer.dto';
 import { EmailOption } from '../mail/types/mail.types';
 import { mailStructure } from '../mail/interface-send/mail.send';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 @Injectable()
 export class WalletService {
@@ -38,7 +38,7 @@ export class WalletService {
         private configService: ConfigService,
         private transactionService: TransactionService,
         private userService: UserService,
-        private mailService: MailService,
+        private eventEmitter: EventEmitter2,
     ) {}
 
     async flutterwaveChargeCard(payload: FlutterwaveChargeCardDto) {
@@ -356,13 +356,16 @@ export class WalletService {
                     balance: senderWallet.balance,
                 },
             );
-            const mailSenderQueue = [
-                await this.mailService.send(optionsSender),
-                await this.mailService.send(optionsReciever),
-            ];
-            Promise.all(mailSenderQueue).then((values) => {
-                console.log('values:::', values);
-            });
+
+            this.eventEmitter.emit('token.sent', optionsSender);
+            this.eventEmitter.emit('token.recieved', optionsReciever);
+            // const mailSenderQueue = [
+            //     await this.mailService.send(optionsSender),
+            //     await this.mailService.send(optionsReciever),
+            // ];
+            // Promise.all(mailSenderQueue).then((values) => {
+            //     console.log('values:::', values);
+            // });
 
             return {
                 status: 200,
