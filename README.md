@@ -14,7 +14,7 @@ A wallet system API developed with NestJS, MySQL and typeorm
 - Find the API documentation [here](https://documenter.getpostman.com/view/11690328/UzBiNnzU)
 
 
-### Install Pacakges
+### Getting Started: Install Pacakges
 
 ```
 $ npm install
