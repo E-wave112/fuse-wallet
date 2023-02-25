@@ -9,7 +9,7 @@ module.exports = {
     entities: ['dist/src/**/*.entity.{ts,js}'],
     migrations: [join(__dirname, 'dist', 'src', 'migrations', '*.{ts,js}')],
     migrationsTableName: 'migrations_history',
-    migrationsRun: true,
+    migrationsRun: false,
     cli: {
         migrationsDir: './dist/src/migrations',
     },
