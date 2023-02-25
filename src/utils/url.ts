@@ -4,6 +4,6 @@ const configService: ConfigService = new ConfigService(configuration);
 const port = configService.get<string | number>('PORT');
 export const host = () => {
     return configService.get('NODE_ENV') === 'production'
-        ? 'https://fuse-wallet.herokuapp.com'
+        ? 'https://web-production-acce8.up.railway.app'
         : `http://localhost:${port}`;
 };
