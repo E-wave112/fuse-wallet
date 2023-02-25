@@ -10,7 +10,7 @@ A wallet system API developed with NestJS, MySQL and typeorm
 - users can only use that security key for recovering their transaction pin.
 - The security key has to be kept in an ultrasafe manner as there is no way for users to recover their account once they lose the key
 
-- Live URL [here](https://fuse-wallet.herokuapp.com/api/v1)
+- Live URL [here](https://web-production-acce8.up.railway.app/api/v1)
 - Find the API documentation [here](https://documenter.getpostman.com/view/11690328/UzBiNnzU)
 
 
