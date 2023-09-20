@@ -16,37 +16,37 @@ A wallet system API developed with NestJS, MySQL and typeorm
 
 ### Getting Started: Install Pacakges
 
-```
-$ npm install
+```bash
+ npm install
 ```
 or
 
-```
-$ yarn
+```bash
+ yarn
 ```
 Then you can then finally start the development server with the command
 
-```
-$ npm run start:dev
+```bash
+ npm run start:dev
 ```
 or
 
-```
-$ yarn start:dev
+```bash
+ yarn start:dev
 ```
 
 ### Dockerizing the development environment
 
 use the command below to build the docker image
-```
+```bash
 docker-compose up --build
 ```
 ### Running the Dev Docker container
 
 To run the application, use the command below:
 
-```
-$ docker-compose up
+```bash
+ docker-compose up
 ```
 
 the server will be running on http://localhost:8000
