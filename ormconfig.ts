@@ -2,10 +2,10 @@
 const { join } = require('path');
 
 module.exports = {
-    type: 'mysql',
-    port: 3306,
+    type: 'postgres',
+    port: 5432,
     url: process.env.DB_URI,
-    synchronize: false,
+    synchronize: true,
     entities: ['dist/src/**/*.entity.{ts,js}'],
     migrations: [join(__dirname, 'dist', 'src', 'migrations', '*.{ts,js}')],
     migrationsTableName: 'migrations_history',
