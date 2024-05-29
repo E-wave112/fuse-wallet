@@ -15,4 +15,9 @@ module.exports = {
     },
     autoLoadEntities: true,
     keepConnectionAlive: true,
+    extra: {
+    ssl: {
+        ca: process.env.SSL_CERT,
+      },
+    },
 };
